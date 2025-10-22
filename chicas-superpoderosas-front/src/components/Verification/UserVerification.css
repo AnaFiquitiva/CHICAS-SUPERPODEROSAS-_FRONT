@@ -1,0 +1,132 @@
+/* Fondo con degradado suave institucional */
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-family: "Work Sans", sans-serif;
+    background: linear-gradient(
+            135deg,
+            rgba(153, 0, 0, 0.85) 0%,
+            rgba(200, 0, 50, 0.7) 50%,
+            rgba(255, 255, 255, 0.6) 100%
+    );
+}
+
+/* Logo institucional */
+.eci-logo {
+    position: absolute;
+    top: 30px;
+    right: 40px;
+    width: 90px;
+    height: auto;
+    opacity: 0.95;
+    transition: all 0.5s ease-in-out;
+}
+
+.eci-logo.large {
+    width: 180px; /* tamaño doble */
+}
+
+/* Tarjeta con efecto vidrio */
+.login-card {
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 22px;
+    box-shadow: 0 8px 40px rgba(153, 0, 0, 0.25);
+    backdrop-filter: blur(12px);
+    padding: 45px 55px;
+    width: 100%;
+    max-width: 440px;
+    text-align: left;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Animación suave al cargar */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Título principal */
+.login-title {
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 5px;
+    color: #222;
+}
+
+.login-title span {
+    color: #990000;
+}
+
+/* Subtítulo */
+.login-subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 25px;
+}
+
+/* Formularios */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: 500;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+    display: block;
+}
+
+input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+/* Botón */
+.btn-login {
+    width: 100%;
+    background-color: #990000;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.btn-login:hover {
+    background-color: #b30000;
+}
+
+/* Recuperación de contraseña */
+.forgot-password {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 13px;
+    color: #333;
+}
+
+.forgot-password a {
+    color: #990000;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+}
