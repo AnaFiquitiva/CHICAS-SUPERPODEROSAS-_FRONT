@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./UserVerification.css"; // Reutiliza los estilos generales
+import logoEci from '../../assets/logo-eci.png';
+
 
 const FacultySelection = () => {
     const navigate = useNavigate();
@@ -42,9 +44,9 @@ const FacultySelection = () => {
         <div className="login-container">
             {/* Logo institucional */}
             <img
-                src="https://scontent.fbog3-3.fna.fbcdn.net/v/t39.30808-6/247262847_4466585430046059_5181816861656944038_n.jpg?_nc_cat=1&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=yERMTb-cNyoQ7kNvwEjTyF7&_nc_oc=AdmZaLk3xNTbDNOTzNFylSeMpwTv6Z_U3xiGF3hUHONiR4PKXC8yeq2gQEd7-NZQEmA&_nc_zt=23&_nc_ht=scontent.fbog3-3.fna&_nc_gid=pdVSZcSqx1HFjy_aNIn3lQ&oh=00_AfdNho1H1GNikL0wUwZ9gmOCEVyw0UtXN_Uxw1r17Yw-3A&oe=68FE074E"
-                alt="Logo ECI"
-                className="eci-logo"
+                src={logoEci}
+                alt="Logo institucional ECI"
+                className="eci-logo large"
             />
 
             <div className="login-card">

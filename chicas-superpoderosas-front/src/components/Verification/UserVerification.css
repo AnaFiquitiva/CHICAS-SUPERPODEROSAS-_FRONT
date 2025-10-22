@@ -1,4 +1,4 @@
-/* Fondo con degradado suave institucional */
+/* Fondo con degradado rojo institucional más visible y elegante */
 .login-container {
     min-height: 100vh;
     display: flex;
@@ -8,45 +8,44 @@
     font-family: "Work Sans", sans-serif;
     background: linear-gradient(
             135deg,
-            rgba(153, 0, 0, 0.85) 0%,
-            rgba(200, 0, 50, 0.7) 50%,
-            rgba(255, 255, 255, 0.6) 100%
+            rgba(59, 0, 0, 1) 0%,       /* vino profundo */
+            rgba(128, 0, 0, 0.92) 45%,  /* rojo intermedio */
+            rgba(193, 39, 45, 0.85) 100% /* rojo claro elegante */
     );
 }
-
 /* Logo institucional */
 .eci-logo {
     position: absolute;
-    top: 30px;
-    right: 40px;
-    width: 90px;
+    top: 40px;
+    right: 50px;
+    width: 180px;
     height: auto;
     opacity: 0.95;
-    transition: all 0.5s ease-in-out;
+    transition: transform 0.4s ease;
 }
 
-.eci-logo.large {
-    width: 180px; /* tamaño doble */
+.eci-logo:hover {
+    transform: scale(1.05);
 }
 
-/* Tarjeta con efecto vidrio */
+/* Tarjeta con mayor espacio y presencia visual */
 .login-card {
-    background: rgba(255, 255, 255, 0.85);
-    border-radius: 22px;
-    box-shadow: 0 8px 40px rgba(153, 0, 0, 0.25);
-    backdrop-filter: blur(12px);
-    padding: 45px 55px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 60px 70px;
     width: 100%;
-    max-width: 440px;
-    text-align: left;
+    max-width: 520px;
+    text-align: center;
     animation: fadeIn 0.8s ease-in-out;
 }
 
-/* Animación suave al cargar */
+/* Animación de aparición */
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(15px);
     }
     to {
         opacity: 1;
@@ -56,11 +55,10 @@
 
 /* Título principal */
 .login-title {
-    font-size: 24px;
-    font-weight: 600;
-    text-align: center;
-    margin-bottom: 5px;
-    color: #222;
+    font-size: 26px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 8px;
 }
 
 .login-title span {
@@ -69,55 +67,66 @@
 
 /* Subtítulo */
 .login-subtitle {
-    text-align: center;
-    font-size: 14px;
+    font-size: 15px;
     color: #555;
-    margin-bottom: 25px;
+    margin-bottom: 35px;
 }
 
-/* Formularios */
+/* Campos del formulario */
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    text-align: left;
 }
 
-label {
-    font-weight: 500;
-    font-size: 14px;
+.form-group label {
+    font-weight: 600;
+    font-size: 15px;
     color: #333;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
     display: block;
 }
 
 input {
     width: 100%;
-    padding: 10px 12px;
-    border-radius: 8px;
+    padding: 12px 14px;
+    border-radius: 10px;
     border: 1px solid #ccc;
-    font-size: 14px;
+    font-size: 15px;
+    background-color: #fafafa;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
-/* Botón */
+input:focus {
+    outline: none;
+    border-color: #990000;
+    background-color: #fff;
+}
+
+/* Botón principal */
 .btn-login {
     width: 100%;
     background-color: #990000;
     color: white;
     border: none;
-    padding: 12px;
-    border-radius: 8px;
+    padding: 14px;
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 0.3px;
 }
 
 .btn-login:hover {
     background-color: #b30000;
+    transform: translateY(-2px);
 }
 
-/* Recuperación de contraseña */
+/* Enlace de recuperación */
 .forgot-password {
     text-align: center;
-    margin-top: 15px;
-    font-size: 13px;
+    margin-top: 18px;
+    font-size: 14px;
     color: #333;
 }
 
@@ -129,4 +138,28 @@ input {
 
 .forgot-password a:hover {
     text-decoration: underline;
+}
+
+/* Responsivo */
+@media (max-width: 480px) {
+    .eci-logo {
+        width: 140px;
+        top: 20px;
+        right: 20px;
+    }
+
+    .login-card {
+        padding: 40px 30px;
+        width: 90%;
+        max-width: 380px;
+    }
+
+    .login-title {
+        font-size: 22px;
+    }
+
+    .btn-login {
+        padding: 12px;
+        font-size: 15px;
+    }
 }
