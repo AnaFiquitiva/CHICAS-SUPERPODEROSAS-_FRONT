@@ -1,0 +1,85 @@
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    font-family: "Inter", sans-serif;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+    background-color: #f8f9fa;
+}
+
+.section-title {
+    margin-top: 30px;
+    margin-bottom: 10px;
+    font-size: 1.4rem;
+    color: #333;
+}
+
+.traffic-light-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.course-light {
+    padding: 10px 15px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    cursor: default;
+}
+
+.summary-cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.levels-container {
+    margin-top: 10px;
+}
+
+.level-card {
+    background-color: white;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.level-header {
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.level-courses {
+    margin-top: 10px;
+    padding-left: 10px;
+}
+
+.course-detail {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+}
+
+.additional-info {
+    margin-top: 15px;
+    background-color: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.loading-message {
+    font-size: 1.2rem;
+    color: #dc3545;
+    text-align: center;
+    margin-top: 50px;
+}
