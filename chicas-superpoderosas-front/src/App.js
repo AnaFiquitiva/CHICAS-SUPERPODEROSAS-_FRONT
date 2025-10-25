@@ -3,15 +3,21 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "r
 
 // Verification
 import UserVerification from "./components/Verification/UserVerification";
+import FacultySelection from "./components/Verification/FacultySelection";
 
 // Dashboards
 import StudentDashboard from "./components/Student/StudentDashboard";
+import DeanDashboard from "./components/Deanery/DeanDashboard";
 
 // Student modules
 import StudentSchedule from "./components/Student/StudentSchedule";
 import StudentRequests from "./components/Student/StudentRequests";
 import StudentSemaphore from "./components/Student/StudentSemaphore";
 import StudentGroupManagement from "./components/Student/StudentGroupManagement";
+
+// Dean modules
+import DeanRequestsPage from "./components/Deanery/DeanRequestsPage.jsx";
+import DeanStudentsPage from "./components/Deanery/DeanStudentsPage.jsx"; // ✅ nuevo import
 
 export default function App() {
     return (
@@ -31,8 +37,14 @@ function AppRoutes() {
         const email = localStorage.getItem("email");
         const name = localStorage.getItem("name");
         const role = localStorage.getItem("role");
-        if (email && name && role === "student") {
-            setUser({ email, name, userType: "student" });
+        const faculty = localStorage.getItem("faculty");
+
+        if (email && role) {
+            if (role === "student" && name) {
+                setUser({ email, name, userType: "student" });
+            } else if (role === "dean") {
+                setUser({ email, userType: "dean", faculty });
+            }
         }
     }, []);
 
@@ -42,7 +54,8 @@ function AppRoutes() {
         navigate("/");
     };
 
-    const handleNavigate = (module) => {
+    // Navegación para estudiantes
+    const handleStudentNavigate = (module) => {
         switch (module) {
             case "dashboard":
                 navigate("/student/dashboard");
@@ -64,79 +77,150 @@ function AppRoutes() {
         }
     };
 
-    // Ruta protegida
-    const PrivateRoute = ({ children }) => {
-        return user ? children : <Navigate to="/" />;
+    // Navegación para decanos
+    const handleDeanNavigate = (module) => {
+        switch (module) {
+            case "dashboard":
+                navigate("/dean/dashboard");
+                break;
+            case "gestionar-solicitudes":
+                navigate("/dean/requests");
+                break;
+            case "informacion-estudiantes":
+                navigate("/dean/students"); // ✅ ahora sí navega correctamente
+                break;
+            case "monitor-grupos":
+                console.log("Navegar a monitor de grupos");
+                break;
+            case "configuracion":
+                console.log("Navegar a configuración");
+                break;
+            default:
+                navigate("/dean/dashboard");
+        }
     };
+
+    // Rutas protegidas
+    const StudentPrivateRoute = ({ children }) =>
+        user && user.userType === "student" ? children : <Navigate to="/" />;
+
+    const DeanPrivateRoute = ({ children }) =>
+        user && user.userType === "dean" ? children : <Navigate to="/" />;
 
     return (
         <Routes>
+            {/* Login */}
             <Route path="/" element={<UserVerification setUser={setUser} />} />
 
-            {/* Dashboard */}
+            {/* Selección de Facultad para Decanos */}
             <Route
-                path="/student/dashboard"
+                path="/faculty-selection"
                 element={
-                    <PrivateRoute>
-                        <StudentDashboard
-                            user={user}
-                            onNavigate={handleNavigate}
-                            onLogout={handleLogout}
-                        />
-                    </PrivateRoute>
+                    user && user.userType === "dean" ? (
+                        <FacultySelection />
+                    ) : (
+                        <Navigate to="/" />
+                    )
                 }
             />
 
-            {/* Módulos de estudiante */}
+            {/* ========== RUTAS DE ESTUDIANTE ========== */}
+            <Route
+                path="/student/dashboard"
+                element={
+                    <StudentPrivateRoute>
+                        <StudentDashboard
+                            user={user}
+                            onNavigate={handleStudentNavigate}
+                            onLogout={handleLogout}
+                        />
+                    </StudentPrivateRoute>
+                }
+            />
+
             <Route
                 path="/student/horario"
                 element={
-                    <PrivateRoute>
+                    <StudentPrivateRoute>
                         <StudentSchedule
                             user={user}
-                            onNavigate={handleNavigate}
+                            onNavigate={handleStudentNavigate}
                             onLogout={handleLogout}
                         />
-                    </PrivateRoute>
+                    </StudentPrivateRoute>
                 }
             />
 
             <Route
                 path="/student/solicitudes"
                 element={
-                    <PrivateRoute>
+                    <StudentPrivateRoute>
                         <StudentRequests
                             user={user}
-                            onNavigate={handleNavigate}
+                            onNavigate={handleStudentNavigate}
                             onLogout={handleLogout}
                         />
-                    </PrivateRoute>
+                    </StudentPrivateRoute>
                 }
             />
 
             <Route
                 path="/student/semaforo"
                 element={
-                    <PrivateRoute>
+                    <StudentPrivateRoute>
                         <StudentSemaphore
                             user={user}
-                            onNavigate={handleNavigate}
+                            onNavigate={handleStudentNavigate}
                             onLogout={handleLogout}
                         />
-                    </PrivateRoute>
+                    </StudentPrivateRoute>
                 }
             />
 
             <Route
                 path="/student/gestion-grupos"
                 element={
-                    <PrivateRoute>
+                    <StudentPrivateRoute>
                         <StudentGroupManagement
                             user={user}
-                            onNavigate={handleNavigate}
+                            onNavigate={handleStudentNavigate}
                             onLogout={handleLogout}
                         />
-                    </PrivateRoute>
+                    </StudentPrivateRoute>
+                }
+            />
+
+            {/* ========== RUTAS DE DECANO ========== */}
+            <Route
+                path="/dean/dashboard"
+                element={
+                    <DeanPrivateRoute>
+                        <DeanDashboard
+                            user={user}
+                            onNavigate={handleDeanNavigate}
+                            onLogout={handleLogout}
+                        />
+                    </DeanPrivateRoute>
+                }
+            />
+
+            {/* Solicitudes */}
+            <Route
+                path="/dean/requests"
+                element={
+                    <DeanPrivateRoute>
+                        <DeanRequestsPage />
+                    </DeanPrivateRoute>
+                }
+            />
+
+            {/* ✅ Nueva ruta: Información de Estudiantes */}
+            <Route
+                path="/dean/students"
+                element={
+                    <DeanPrivateRoute>
+                        <DeanStudentsPage />
+                    </DeanPrivateRoute>
                 }
             />
 

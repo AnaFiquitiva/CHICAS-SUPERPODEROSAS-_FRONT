@@ -20,35 +20,54 @@ const UserVerification = ({ setUser }) => {
         let role = null;
         let name = getNameFromEmail(email);
 
+        // ESTUDIANTE
         if (email.includes("@mail.escuelaing.edu.co")) {
             role = "student";
             localStorage.setItem("role", role);
             localStorage.setItem("name", name);
             localStorage.setItem("email", email);
 
-            // Actualizar el estado en App.js
             setUser({ email, name, userType: "student" });
             navigate("/student/dashboard");
-        } else if (email.includes("@pro.escuelaing.edu.co")) {
+        }
+        // PROFESOR
+        else if (email.includes("@pro.escuelaing.edu.co")) {
             role = "teacher";
             localStorage.setItem("role", role);
             localStorage.setItem("email", email);
             setUser({ email, name, userType: "teacher" });
             navigate("/teacher/dashboard");
-        } else if (email.includes("@admi.escuelaing.edu.co")) {
+        }
+        // ADMINISTRADOR
+        else if (email.includes("@admi.escuelaing.edu.co")) {
             role = "admin";
             localStorage.setItem("role", role);
             localStorage.setItem("email", email);
             setUser({ email, name, userType: "admin" });
             navigate("/admin/dashboard");
-        } else if (email.includes("@escuelaing.edu.co")) {
+        }
+        // DECANO - Validación específica
+        else if (email.toLowerCase() === "decano@escuelaing.edu.co") {
+            // Validación simple de contraseña (puedes mejorar esto)
+            // Por ahora acepta cualquier contraseña como ID del decano
+            // En producción, aquí validarías contra una base de datos
+
             role = "dean";
             localStorage.setItem("role", role);
             localStorage.setItem("email", email);
-            setUser({ email, name, userType: "dean" });
+
+            setUser({ email, userType: "dean" });
+
+            // Redirigir a la selección de facultad
             navigate("/faculty-selection");
-        } else {
-            alert("Correo institucional no reconocido. Usa un dominio válido.");
+        }
+        // EMAIL NO RECONOCIDO
+        else {
+            alert("Correo institucional no reconocido. Usa un dominio válido:\n" +
+                "- Estudiantes: @mail.escuelaing.edu.co\n" +
+                "- Profesores: @pro.escuelaing.edu.co\n" +
+                "- Administradores: @admi.escuelaing.edu.co\n" +
+                "- Decanos: Decano@escuelaing.edu.co");
         }
     };
 

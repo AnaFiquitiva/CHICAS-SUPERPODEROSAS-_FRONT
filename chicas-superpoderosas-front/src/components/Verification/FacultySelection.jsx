@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./UserVerification.css"; // Reutiliza los estilos generales
+import "./UserVerification.css";
 import logoEci from '../../assets/logo-eci.png';
-
 
 const FacultySelection = () => {
     const navigate = useNavigate();
@@ -34,10 +33,11 @@ const FacultySelection = () => {
             return;
         }
 
-        // Simulación: si eres decano o admin, redirige a su dashboard
-        setTimeout(() => {
-            if (faculty) navigate("/dean/dashboard");
-        }, 1000);
+        // Guardar la facultad seleccionada en localStorage
+        localStorage.setItem("faculty", faculty);
+
+        // Redirigir al dashboard del decano
+        navigate("/dean/dashboard");
     };
 
     return (
@@ -70,6 +70,7 @@ const FacultySelection = () => {
                                 border: "1px solid #ccc",
                                 fontSize: "14px",
                                 backgroundColor: "rgba(255,255,255,0.9)",
+                                fontFamily: "Work Sans, sans-serif"
                             }}
                         >
                             <option value="">Seleccione una facultad</option>
