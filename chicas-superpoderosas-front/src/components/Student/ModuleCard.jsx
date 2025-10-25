@@ -53,4 +53,3 @@ export default function ModuleCard({ title, description, icon, onClick }) {
         </div>
     );
 }
-

@@ -8,11 +8,15 @@ import {
 import logoEci from "../../assets/logo-eci.png";
 
 export default function Sidebar({ user, onNavigate, onLogout }) {
+    if (!user) return null; // Evita errores si user no está definido
+
     const studentName = user.name || user.email.split("@")[0];
+
     const mockStudent = {
         name: studentName,
         career: "Ingeniería de Sistemas",
         image: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+        id: "202500123", // Opcional, si lo necesitas
     };
 
     return (
@@ -23,12 +27,15 @@ export default function Sidebar({ user, onNavigate, onLogout }) {
                 color: "white",
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "space-between",
+                justifyContent: "space-between", // Esto asegura que el botón quede abajo
                 padding: "25px 20px",
             }}
         >
             <div>
+                {/* Logo */}
                 <img src={logoEci} alt="Logo ECI" style={{ width: 140, marginBottom: 30 }} />
+
+                {/* Info estudiante */}
                 <div
                     style={{
                         display: "flex",
@@ -53,6 +60,7 @@ export default function Sidebar({ user, onNavigate, onLogout }) {
                     </div>
                 </div>
 
+                {/* Menú de navegación */}
                 <nav style={{ display: "flex", flexDirection: "column", gap: 18 }}>
                     <SidebarItem icon={<HomeIcon size={22} />} label="Inicio" onClick={() => onNavigate("dashboard")} />
                     <SidebarItem icon={<ProfileIcon size={22} />} label="Perfil" onClick={() => onNavigate("perfil")} />
@@ -60,6 +68,7 @@ export default function Sidebar({ user, onNavigate, onLogout }) {
                 </nav>
             </div>
 
+            {/* Botón cerrar sesión abajo */}
             <button
                 onClick={onLogout}
                 style={{
@@ -107,3 +116,4 @@ function SidebarItem({ icon, label, onClick }) {
         </div>
     );
 }
+

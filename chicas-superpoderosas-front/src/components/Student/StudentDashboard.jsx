@@ -1,3 +1,4 @@
+// StudentDashboard.jsx
 import React from "react";
 import Sidebar from "./Sidebar";
 import ProfileCard from "./ProfileCard";
@@ -9,8 +10,13 @@ import {
 } from "./Icons";
 
 export default function StudentDashboard({ user, onNavigate, onLogout }) {
+    // Si user aún no está cargado, mostramos mensaje de carga
+    if (!user) {
+        return <p style={{ padding: 40 }}>Cargando información del estudiante...</p>;
+    }
+
     const mockStudent = {
-        name: user.name,
+        name: user?.name || user?.email?.split("@")[0] || "Estudiante",
         career: "Ingeniería de Sistemas",
         notifications: [
             { text: "Nueva solicitud aprobada", link: "/student/solicitudes" },
@@ -29,7 +35,6 @@ export default function StudentDashboard({ user, onNavigate, onLogout }) {
 
     return (
         <div style={{ display: "flex", minHeight: "100vh" }}>
-            {/* Sidebar reutilizable */}
             <Sidebar user={user} onNavigate={onNavigate} onLogout={onLogout} />
 
             <main
@@ -42,7 +47,6 @@ export default function StudentDashboard({ user, onNavigate, onLogout }) {
                     backgroundColor: "#FAFAFA",
                 }}
             >
-                {/* Sección de módulos */}
                 <section
                     style={{
                         flex: 2,
@@ -68,7 +72,6 @@ export default function StudentDashboard({ user, onNavigate, onLogout }) {
                     ))}
                 </section>
 
-                {/* Perfil y notificaciones */}
                 <aside style={{ flex: 1, maxWidth: 350 }}>
                     <ProfileCard
                         student={mockStudent}
