@@ -1,0 +1,125 @@
+.topbar {
+    width: 100%;
+    height: 100px;
+    background-color: #ffffff;
+    border-bottom: 2px solid #d1d1d1; /* línea base más visible */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); /* sombra sutil hacia abajo */
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    font-family: "Poppins", sans-serif;
+    position: relative;
+    z-index: 1000;
+}
+
+/* 🔹 IZQUIERDA */
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+.topbar-logo {
+    width: 130px;
+    height: 100px;
+}
+
+.topbar-title p {
+    font-weight: bold; /* Negrilla */
+    font-size: 18px;   /* Tamaño de título */
+    color: #222;       /* Color del texto */
+    margin: 0;
+}
+
+
+.eci-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #222;
+}
+
+.eci-subtitle {
+    font-size: 12px;
+    color: #777;
+}
+
+/* 🔹 CENTRO: Navegación */
+.topbar-center {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+
+    /* 👇 Estas dos líneas mueven el bloque más hacia la derecha */
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    color: #222;
+    font-size: 14px;
+    font-weight: 500;
+    position: relative;
+}
+
+.nav-item:hover {
+    color: #a30000;
+}
+
+.notif-dot {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 6px;
+    height: 6px;
+    background: #a30000;
+    border-radius: 50%;
+}
+
+/* 🔹 DERECHA */
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 25px; /* Espacio adicional opcional */
+}
+
+.user-info {
+    text-align: right;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #222;
+}
+
+.user-code {
+    font-size: 12px;
+    color: #777;
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.back-button {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 15px;
+    transition: transform 0.2s ease;
+}
+
+.back-button:hover {
+    transform: scale(1.1);
+}
+
+

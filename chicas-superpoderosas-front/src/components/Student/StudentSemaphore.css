@@ -83,3 +83,82 @@
     text-align: center;
     margin-top: 50px;
 }
+.detail-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 16px;
+    width: 320px;
+    position: relative;
+    overflow: hidden;
+}
+
+.class-color-bar {
+    height: 6px;
+    width: 100%;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    margin-bottom: 12px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #555;
+    z-index: 10;
+}
+
+
+.detail-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.detail-divider {
+    border: none;
+    height: 1px;
+    background: #eee;
+    margin: 12px 0;
+}
+
+.detail-section {
+    margin-bottom: 12px;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.detail-section.shaded {
+    background: #f9f9f9;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.section-label {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.section-value {
+    font-weight: 400;
+}
+
+.info-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.tag {
+    background: #f0f0f0;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+}

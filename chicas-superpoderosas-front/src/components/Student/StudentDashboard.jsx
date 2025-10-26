@@ -1,6 +1,6 @@
 // StudentDashboard.jsx
 import React from "react";
-import Sidebar from "./Sidebar";
+import TopBar from "./TopBar";
 import ProfileCard from "./ProfileCard";
 import {
     ScheduleIcon,
@@ -34,8 +34,10 @@ export default function StudentDashboard({ user, onNavigate, onLogout }) {
     ];
 
     return (
-        <div style={{ display: "flex", minHeight: "100vh" }}>
-            <Sidebar user={user} onNavigate={onNavigate} onLogout={onLogout} />
+
+        <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+            {/* ✅ Barra superior */}
+            <TopBar />
 
             <main
                 style={{
