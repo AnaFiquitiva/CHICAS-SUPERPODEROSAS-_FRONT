@@ -1,201 +1,276 @@
 import React, { useState } from "react";
-import TopBar from "./TopBar";
 import "./StudentRequests.css";
+import TopBar from "./TopBar";
+import {
+    CheckIcon,
+    ClockIcon,
+    HourglassIcon,
+    CrossIcon,
+    DocumentIcon,
+} from "./Icons";
 
-// ICONOS PERSONALIZADOS
-import { CheckIcon, ClockIcon, CrossIcon, HourglassIcon, EyeIcon, DocumentIcon } from "./Icons";
-
-// Colores pastel por estado
-const STATUS_COLORS = {
-    Pendiente: "#FFE5B4",
-    "En Revisión": "#B4DDFE",
-    Aprobada: "#B4FEC9",
-    Rechazada: "#FEC1C1",
-};
-
-// Datos mock iniciales
-const initialRequests = [
-    {
-        id: 1,
-        type: "Cambio de grupo",
-        status: "Pendiente",
-        code: "REQ-2025-001",
-        date: "2025-10-20",
-        description: "Conflicto de horario con Matemáticas",
-        origin: "Grupo A",
-        destination: "Grupo B",
-        observations: "",
-        semester: "2025-1",
-    },
-    {
-        id: 2,
-        type: "Cambio de materia",
-        status: "Aprobada",
-        code: "REQ-2024-023",
-        date: "2024-08-15",
-        description: "Sugerencia de cambio de Física",
-        origin: "Física I",
-        destination: "Física II",
-        observations: "",
-        semester: "2024-2",
-    },
-];
-
-export default function StudentRequests({ user, onLogout }) {
-    const [requests, setRequests] = useState(initialRequests);
-    const [showModal, setShowModal] = useState(false);
-    const [form, setForm] = useState({ type: "", origin: "", destination: "", observations: "" });
-    const [filter, setFilter] = useState("");
-    const [semesterFilter, setSemesterFilter] = useState("");
-
-    const today = new Date();
-
-    const handleOpenModal = () => setShowModal(true);
-    const handleCloseModal = () => setForm({ type: "", origin: "", destination: "", observations: "" }) || setShowModal(false);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (!form.type || !form.origin || !form.destination) {
-            alert("Por favor completa todos los campos obligatorios.");
-            return;
-        }
-
-        const newRequest = {
-            id: requests.length + 1,
-            type: form.type,
+const StudentRequests = () => {
+    const [filter, setFilter] = useState("Todas");
+    const [showForm, setShowForm] = useState(false);
+    const [showDetails, setShowDetails] = useState(null);
+    const [requests, setRequests] = useState([
+        {
+            id: "RAD-000001",
+            type: "Cambio de Grupo",
+            description:
+                "Solicito cambio de grupo debido a conflicto de horarios con otra materia inscrita.",
+            observations: "El coordinador aprobó el cambio solicitado.",
+            date: "15/10/24",
+            status: "Aprobada",
+        },
+        {
+            id: "RAD-000002",
+            type: "Cambio de Materia",
+            description:
+                "Solicito cambio de materia electiva por disponibilidad de cupos.",
+            observations: "Pendiente de revisión por parte del área académica.",
+            date: "18/10/24",
             status: "Pendiente",
-            code: `REQ-${today.getFullYear()}-${String(requests.length + 1).padStart(3, "0")}`,
-            date: today.toISOString().split("T")[0],
-            description: form.description || "",
-            origin: form.origin,
-            destination: form.destination,
-            observations: form.observations || "",
-            semester: "2025-1",
-        };
+        },
+        {
+            id: "RAD-000003",
+            type: "Validación de Materia",
+            description: "Solicito validación de materia cursada en otra institución.",
+            observations: "Rechazada por falta de soporte documental.",
+            date: "10/10/24",
+            status: "Rechazada",
+        },
+        {
+            id: "RAD-000004",
+            type: "Retiro de Materia",
+            description: "Solicito retiro de materia por motivos personales de salud.",
+            observations: "En proceso de revisión médica.",
+            date: "22/10/24",
+            status: "En Revisión",
+        },
+    ]);
 
-        setRequests([newRequest, ...requests]);
-        handleCloseModal();
-        alert("Tu solicitud ha sido enviada con éxito");
-    };
+    const filteredRequests =
+        filter === "Todas" ? requests : requests.filter((r) => r.status === filter);
 
-    const filteredRequests = requests.filter(
-        (r) =>
-            (r.type.toLowerCase().includes(filter.toLowerCase()) ||
-                r.status.toLowerCase().includes(filter.toLowerCase()) ||
-                r.code.toLowerCase().includes(filter.toLowerCase())) &&
-            (semesterFilter === "" || r.semester === semesterFilter)
-    );
-
-    const semesters = Array.from(new Set(requests.map(r => r.semester))).sort((a, b) => b.localeCompare(a));
-
-    const summary = {
+    const counts = {
         total: requests.length,
-        pendiente: requests.filter(r => r.status === "Pendiente").length,
-        revision: requests.filter(r => r.status === "En Revisión").length,
-        aprobada: requests.filter(r => r.status === "Aprobada").length,
-        rechazada: requests.filter(r => r.status === "Rechazada").length,
+        aprobadas: requests.filter((r) => r.status === "Aprobada").length,
+        pendientes: requests.filter((r) => r.status === "Pendiente").length,
+        rechazadas: requests.filter((r) => r.status === "Rechazada").length,
+        revision: requests.filter((r) => r.status === "En Revisión").length,
     };
 
-    const getStatusIcon = (status) => {
-        switch (status) {
-            case "Pendiente": return <HourglassIcon size={20} color="#FFA500" />;
-            case "En Revisión": return <ClockIcon size={20} color="#1E90FF" />;
-            case "Aprobada": return <CheckIcon size={20} color="#17C964" />;
-            case "Rechazada": return <CrossIcon size={20} color="#F31260" />;
-            default: return null;
-        }
+    const handleNewRequest = (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const newReq = {
+            id: `RAD-${(requests.length + 1).toString().padStart(6, "0")}`,
+            type: form.type.value,
+            description: form.description.value,
+            observations: form.observations.value,
+            date: new Date().toLocaleDateString("es-CO"),
+            status: "Pendiente",
+        };
+        setRequests([newReq, ...requests]);
+        setShowForm(false);
+        alert("✅ Solicitud creada correctamente");
     };
 
     return (
-        <div className="student-requests">
-            <TopBar onLogout={onLogout} />
+        <>
+            <TopBar />
 
-            <main className="requests-main">
-                <h1>Mis Solicitudes Académicas</h1>
-
-                <button className="btn-new-request" onClick={handleOpenModal}>
-                    + Nueva Solicitud
-                </button>
-
-                {/* Filtros */}
-                <div className="filters">
-                    <input
-                        type="text"
-                        placeholder="Buscar por tipo, estado o código..."
-                        value={filter}
-                        onChange={(e) => setFilter(e.target.value)}
-                    />
-                    <select value={semesterFilter} onChange={(e) => setSemesterFilter(e.target.value)}>
-                        <option value="">Todos los semestres</option>
-                        {semesters.map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
+            <div className="requests-container">
+                <div className="requests-header">
+                    <div>
+                        <h2>Mis Solicitudes Académicas</h2>
+                        <p>Crea y gestiona tus solicitudes académicas</p>
+                    </div>
+                    <button className="btn-new" onClick={() => setShowForm(true)}>
+                        + Nueva Solicitud
+                    </button>
                 </div>
 
-                {/* Resumen */}
-                <div className="summary-cards">
-                    <SummaryCard title="Total Solicitudes" count={summary.total} icon={<DocumentIcon size={24} />} />
-                    <SummaryCard title="Pendientes" count={summary.pendiente} color={STATUS_COLORS.Pendiente} icon={<HourglassIcon />} />
-                    <SummaryCard title="En Revisión" count={summary.revision} color={STATUS_COLORS["En Revisión"]} icon={<ClockIcon />} />
-                    <SummaryCard title="Aprobadas" count={summary.aprobada} color={STATUS_COLORS.Aprobada} icon={<CheckIcon />} />
-                    <SummaryCard title="Rechazadas" count={summary.rechazada} color={STATUS_COLORS.Rechazada} icon={<CrossIcon />} />
+                {/* === Cards resumen === */}
+                <div className="requests-cards">
+                    <div className="card">
+                        <div className="card-icon total">
+                            <DocumentIcon size={32} color="#003876" />
+                        </div>
+                        <p>Total Solicitudes</p>
+                        <h3>{counts.total}</h3>
+                    </div>
+
+                    <div className="card">
+                        <div className="card-icon revision">
+                            <ClockIcon size={32} color="#0072f5" />
+                        </div>
+                        <p>En Revisión</p>
+                        <h3>
+                            {counts.revision} de {counts.total}
+                        </h3>
+                    </div>
+
+                    <div className="card">
+                        <div className="card-icon pendiente">
+                            <HourglassIcon size={32} color="#ffa500" />
+                        </div>
+                        <p>Pendientes</p>
+                        <h3>
+                            {counts.pendientes} de {counts.total}
+                        </h3>
+                    </div>
+
+                    <div className="card">
+                        <div className="card-icon rechazada">
+                            <CrossIcon size={32} color="#ff4c4c" />
+                        </div>
+                        <p>Rechazadas</p>
+                        <h3>
+                            {counts.rechazadas} de {counts.total}
+                        </h3>
+                    </div>
                 </div>
 
-                {/* Lista de solicitudes */}
-                <div className="requests-list">
-                    {filteredRequests.map(r => (
-                        <div key={r.id} className="request-card">
-                            <div>
-                                <p className="request-type">{r.type}</p>
-                                <p>{r.description}</p>
-                                <p className="request-info">Código: {r.code} | Fecha: {r.date} | Semestre: {r.semester}</p>
-                                <p className="request-info">Origen: {r.origin} | Destino: {r.destination}</p>
-                            </div>
-                            <div className="request-actions">
-                <span className="status-label" style={{ backgroundColor: STATUS_COLORS[r.status] }}>
-                  {getStatusIcon(r.status)} {r.status}
-                </span>
-                                <button className="btn-view" onClick={() => alert(`Detalles de la solicitud ${r.code}`)}>
-                                    <EyeIcon size={18} /> Ver Detalles
+                {/* === Tabs === */}
+                <div className="requests-tabs">
+                    {["Todas", "Pendiente", "En Revisión", "Aprobada", "Rechazada"].map(
+                        (tab) => (
+                            <button
+                                key={tab}
+                                className={`tab ${filter === tab ? "active" : ""}`}
+                                onClick={() => setFilter(tab)}
+                            >
+                                {tab === "Todas"
+                                    ? `Todas (${counts.total})`
+                                    : `${tab}s (${
+                                        requests.filter((r) => r.status === tab).length
+                                    })`}
+                            </button>
+                        )
+                    )}
+                </div>
+
+                {/* === Tabla de solicitudes === */}
+                <table className="requests-table">
+                    <thead>
+                    <tr>
+                        <th>N° Radicado</th>
+                        <th>Tipo de Solicitud</th>
+                        <th>Descripción</th>
+                        <th>Observaciones</th>
+                        <th>Fecha Creación</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {filteredRequests.map((req) => (
+                        <tr key={req.id}>
+                            <td>
+                                <span className="radicado">{req.id}</span>
+                            </td>
+                            <td>{req.type}</td>
+                            <td>{req.description}</td>
+                            <td>{req.observations}</td>
+                            <td>{req.date}</td>
+                            <td>
+                                    <span
+                                        className={`status ${req.status
+                                            .toLowerCase()
+                                            .replace(" ", "-")}`}
+                                    >
+                                        {req.status}
+                                    </span>
+                            </td>
+                            <td>
+                                <button
+                                    className="details-btn"
+                                    onClick={() => setShowDetails(req)}
+                                >
+                                    👁 Ver Detalles
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* === Modal Nueva Solicitud === */}
+            {showForm && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <h3>Nueva Solicitud Académica</h3>
+                        <form onSubmit={handleNewRequest}>
+                            <label>Tipo de Solicitud</label>
+                            <select name="type" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="Cambio de Grupo">Cambio de Grupo</option>
+                                <option value="Cambio de Materia">Cambio de Materia</option>
+                                <option value="Retiro de Materia">Retiro de Materia</option>
+                                <option value="Validación de Materia">
+                                    Validación de Materia
+                                </option>
+                            </select>
+
+                            <label>Descripción</label>
+                            <textarea
+                                name="description"
+                                rows="3"
+                                placeholder="Describe brevemente el motivo..."
+                                required
+                            ></textarea>
+
+                            <label>Observaciones</label>
+                            <textarea
+                                name="observations"
+                                rows="2"
+                                placeholder="Añade observaciones adicionales (opcional)"
+                            ></textarea>
+
+                            <div className="modal-actions">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowForm(false)}
+                                    className="cancel-btn"
+                                >
+                                    Cancelar
+                                </button>
+                                <button type="submit" className="btn-primary">
+                                    Enviar Solicitud
                                 </button>
                             </div>
-                        </div>
-                    ))}
-                    {filteredRequests.length === 0 && <p>No se encontraron solicitudes.</p>}
+                        </form>
+                    </div>
                 </div>
+            )}
 
-                {/* Modal */}
-                {showModal && (
-                    <div className="modal-overlay">
-                        <div className="modal-content">
-                            <h2>Nueva Solicitud</h2>
-                            <form onSubmit={handleSubmit}>
-                                <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} required>
-                                    <option value="">Tipo de solicitud</option>
-                                    <option value="Cambio de grupo">Cambio de grupo</option>
-                                    <option value="Cambio de materia">Cambio de materia</option>
-                                </select>
-                                <input type="text" placeholder="Materia o grupo actual" value={form.origin} onChange={e => setForm({ ...form, origin: e.target.value })} required />
-                                <input type="text" placeholder="Sugerencia de cambio" value={form.destination} onChange={e => setForm({ ...form, destination: e.target.value })} required />
-                                <textarea placeholder="Observaciones adicionales" value={form.observations} onChange={e => setForm({ ...form, observations: e.target.value })} />
-                                <div className="modal-buttons">
-                                    <button type="button" onClick={handleCloseModal}>Cancelar</button>
-                                    <button type="submit">Enviar</button>
-                                </div>
-                            </form>
+            {/* === Modal Detalles === */}
+            {showDetails && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <h3>Detalles de la Solicitud</h3>
+                        <p><b>N° Radicado:</b> {showDetails.id}</p>
+                        <p><b>Tipo:</b> {showDetails.type}</p>
+                        <p><b>Descripción:</b> {showDetails.description}</p>
+                        <p><b>Observaciones:</b> {showDetails.observations}</p>
+                        <p><b>Estado:</b> {showDetails.status}</p>
+                        <p><b>Fecha de Creación:</b> {showDetails.date}</p>
+                        <div className="modal-actions">
+                            <button
+                                onClick={() => setShowDetails(null)}
+                                className="btn-primary"
+                            >
+                                Cerrar
+                            </button>
                         </div>
                     </div>
-                )}
-            </main>
-        </div>
+                </div>
+            )}
+        </>
     );
-}
+};
 
-function SummaryCard({ title, count, color = "#333", icon }) {
-    return (
-        <div className="summary-card" style={{ color }}>
-            {icon && <div className="summary-icon">{icon}</div>}
-            <p>{title}</p>
-            <p className="summary-count">{count}</p>
-        </div>
-    );
-}
+export default StudentRequests;

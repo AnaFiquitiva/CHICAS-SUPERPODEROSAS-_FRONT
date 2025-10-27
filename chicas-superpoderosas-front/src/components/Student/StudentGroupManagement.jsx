@@ -1,4 +1,5 @@
 import React from "react";
+import defaultAvatar from "../../assets/default-avatar.png";
 
 const StudentGroupManagement = () => {
     return (

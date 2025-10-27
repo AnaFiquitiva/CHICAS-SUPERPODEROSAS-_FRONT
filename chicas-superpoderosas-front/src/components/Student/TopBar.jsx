@@ -2,6 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./TopBar.css";
 import logoEci from "../../assets/logo-eci.png";
+import defaultAvatar from "../../assets/default-avatar.png"; // 📸 Imagen por defecto
+
 import {
     ProfileIcon,
     NotificationIcon,
@@ -13,35 +15,22 @@ import {
 const TopBar = ({ onLogout }) => {
     const name = localStorage.getItem("name") || "Usuario";
     const email = localStorage.getItem("email") || "correo@escuelaing.edu.co";
-
-    // Generar código (últimos 9 dígitos del correo)
     const codigo = email.match(/\d{9}/)?.[0] || "000000000";
 
     const navigate = useNavigate();
 
-    // ✅ Redirige correctamente al dashboard del estudiante
-    const goHome = () => {
-        navigate("/student/dashboard");
-    };
-
-    // 🔙 Volver a la pantalla anterior
-    const goBack = () => {
-        navigate(-1); // Retrocede una página en el historial
-    };
-
-    // 🔒 Cerrar sesión y limpiar datos
+    const goHome = () => navigate("/student/dashboard");
+    const goBack = () => navigate(-1);
     const handleLogout = () => {
-        // Limpiar localStorage
         localStorage.removeItem("name");
         localStorage.removeItem("email");
-        // Llamar callback si se pasó
         if (onLogout) onLogout();
-        // Redirigir al login
         navigate("/login");
     };
 
     return (
         <header className="topbar">
+            {/* 🔙 Lado izquierdo: Logo y botón atrás */}
             <div className="topbar-left">
                 <div className="back-button" onClick={goBack}>
                     <BackArrowIcon size={26} color="#A30000" />
@@ -51,6 +40,22 @@ const TopBar = ({ onLogout }) => {
                     <p className="eci-subtitle">Julio Garavito · SIRHA</p>
                 </div>
             </div>
+
+
+            {/* 🔔 Íconos lado derecho */}
+            <div className="topbar-user">
+                <img
+                    src={defaultAvatar}
+                    alt="Usuario"
+                    className="user-avatar"
+                />
+                <div className="user-info">
+                    <p className="user-name">{name}</p>
+                    <p className="user-code">ID: {codigo}</p>
+                </div>
+            </div>
+
+
 
             <nav className="topbar-center">
                 <div className="nav-item" onClick={handleLogout}>

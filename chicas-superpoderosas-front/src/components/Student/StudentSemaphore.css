@@ -1,164 +1,172 @@
-.dashboard-container {
-    display: flex;
-    min-height: 100vh;
-    font-family: "Inter", sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700&display=swap');
+
+:root {
+    --color-aprobada: #d4f8d4;
+    --color-cursando: #e5f0ff;
+    --color-disponible: #fff3e0;
+    --color-bloqueada: #e0e0e0;
+    --color-reprobada: #f8d4d4;
+
+    --borde-aprobada: #33c652;
+    --borde-cursando: #4a90e2;
+    --borde-disponible: #ffa726;
+    --borde-bloqueada: #9e9e9e;
+    --borde-reprobada: #e53935;
+
+    --font-family: 'Work Sans', sans-serif;
+    --font-size: 14px;
 }
 
-.main-content {
-    flex: 1;
-    padding: 20px;
-    background-color: #f8f9fa;
-}
-
-.section-title {
-    margin-top: 30px;
-    margin-bottom: 10px;
-    font-size: 1.4rem;
+body {
+    font-family: var(--font-family);
+    background-color: #f5f6fa;
     color: #333;
+    margin: 0;
+    padding: 0;
 }
 
-.traffic-light-summary {
+/* Contenedor principal */
+.semaforo-container {
+    padding: 20px 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Barra superior */
+.semaforo-header {
     display: flex;
+    justify-content: space-between;
     flex-wrap: wrap;
     gap: 10px;
+    margin-bottom: 20px;
 }
 
-.course-light {
-    padding: 10px 15px;
-    border-radius: 8px;
-    color: white;
-    font-weight: 500;
-    cursor: default;
-}
-
-.summary-cards {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin-top: 10px;
-}
-
-.levels-container {
-    margin-top: 10px;
-}
-
-.level-card {
-    background-color: white;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.level-header {
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.level-courses {
-    margin-top: 10px;
-    padding-left: 10px;
-}
-
-.course-detail {
-    display: flex;
-    justify-content: space-between;
-    padding: 5px 0;
-}
-
-.additional-info {
-    margin-top: 15px;
-    background-color: white;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.loading-message {
-    font-size: 1.2rem;
-    color: #dc3545;
-    text-align: center;
-    margin-top: 50px;
-}
-.detail-card {
-    background: #fff;
+.semaforo-card {
+    background: white;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    padding: 16px;
-    width: 320px;
-    position: relative;
-    overflow: hidden;
+    padding: 15px 20px;
+    flex: 1;
+    min-width: 230px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.class-color-bar {
-    height: 6px;
-    width: 100%;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    margin-bottom: 12px;
-}
-
-.close-btn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: transparent;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    color: #555;
-    z-index: 10;
-}
-
-
-.detail-header {
+/* Buscador y filtro */
+.semaforo-search-filter {
     display: flex;
-    justify-content: flex-start;
-    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
 }
 
-.detail-divider {
-    border: none;
-    height: 1px;
-    background: #eee;
-    margin: 12px 0;
-}
-
-.detail-section {
-    margin-bottom: 12px;
-    padding: 12px;
+.semaforo-search-filter input,
+.semaforo-search-filter select {
+    border: 1px solid #ddd;
     border-radius: 8px;
+    padding: 8px 12px;
+    font-size: var(--font-size);
 }
 
-.detail-section.shaded {
-    background: #f9f9f9;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+/* Leyenda de colores */
+.semaforo-legend {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
 }
 
-.section-label {
-    font-weight: 500;
+.leyenda-item {
     display: flex;
     align-items: center;
     gap: 6px;
-    margin-bottom: 4px;
+    font-size: 13px;
 }
 
-.section-value {
-    font-weight: 400;
+.leyenda-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
 }
 
-.info-tags {
+/* Colores de la leyenda */
+.aprobada-color { background: var(--borde-aprobada); }
+.cursando-color { background: var(--borde-cursando); }
+.disponible-color { background: var(--borde-disponible); }
+.bloqueada-color { background: var(--borde-bloqueada); }
+.reprobada-color { background: var(--borde-reprobada); }
+
+/* Cuadrícula de semestres */
+.semestres-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+/* Tarjeta de semestre */
+.semestre-card {
+    background: #7b0000;
+    border-radius: 14px;
+    padding: 10px 15px;
+    color: white;
     display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
+    flex-direction: column;
 }
 
-.tag {
-    background: #f0f0f0;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 12px;
+.semestre-titulo {
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 12px;
+    font-size: 15px;
+}
+
+/* Lista de materias */
+.materias-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Tarjeta de materia */
+.materia-card {
+    background: white;
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 2px solid transparent;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+}
+
+/* Estado de la materia (bordes y fondo) */
+.materia-aprobada {
+    background: var(--color-aprobada);
+    border-color: var(--borde-aprobada);
+}
+
+.materia-cursando {
+    background: var(--color-cursando);
+    border-color: var(--borde-cursando);
+}
+
+.materia-disponible {
+    background: var(--color-disponible);
+    border-color: var(--borde-disponible);
+}
+
+.materia-bloqueada {
+    background: var(--color-bloqueada);
+    border-color: var(--borde-bloqueada);
+}
+
+.materia-reprobada {
+    background: var(--color-reprobada);
+    border-color: var(--borde-reprobada);
+}
+
+/* Hover */
+.materia-card:hover {
+    transform: scale(1.01);
+    transition: 0.2s ease-in-out;
 }

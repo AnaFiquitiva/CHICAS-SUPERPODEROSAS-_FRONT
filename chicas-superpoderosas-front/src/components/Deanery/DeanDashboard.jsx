@@ -6,7 +6,7 @@ export default function DeanDashboard({ dean, onNavigate, onLogout }) {
     const navigate = useNavigate();
 
     const mockDean = dean || {
-        name: "Dr. Carlos Rodríguez",
+            name: "Dr. Carlos Rodríguez",
         role: "Coordinador Académico",
         career: "Ingeniería de Sistemas",
         image: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",

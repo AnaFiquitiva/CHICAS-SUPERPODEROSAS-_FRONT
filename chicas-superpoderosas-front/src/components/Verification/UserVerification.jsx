@@ -17,57 +17,55 @@ const UserVerification = ({ setUser }) => {
             return;
         }
 
+        // Normalizar email: quitar espacios y pasar a minúsculas
+        const normalizedEmail = email.trim().toLowerCase();
+        const name = getNameFromEmail(normalizedEmail);
         let role = null;
-        let name = getNameFromEmail(email);
 
         // ESTUDIANTE
-        if (email.includes("@mail.escuelaing.edu.co")) {
+        if (normalizedEmail.includes("@mail.escuelaing.edu.co")) {
             role = "student";
             localStorage.setItem("role", role);
             localStorage.setItem("name", name);
-            localStorage.setItem("email", email);
+            localStorage.setItem("email", normalizedEmail);
 
-            setUser({ email, name, userType: "student" });
+            setUser({ email: normalizedEmail, name, userType: "student" });
             navigate("/student/dashboard");
         }
         // PROFESOR
-        else if (email.includes("@pro.escuelaing.edu.co")) {
+        else if (normalizedEmail.includes("@pro.escuelaing.edu.co")) {
             role = "teacher";
             localStorage.setItem("role", role);
-            localStorage.setItem("email", email);
-            setUser({ email, name, userType: "teacher" });
+            localStorage.setItem("email", normalizedEmail);
+            setUser({ email: normalizedEmail, name, userType: "teacher" });
             navigate("/teacher/dashboard");
         }
         // ADMINISTRADOR
-        else if (email.includes("@admi.escuelaing.edu.co")) {
+        else if (normalizedEmail.includes("@admi.escuelaing.edu.co")) {
             role = "admin";
             localStorage.setItem("role", role);
-            localStorage.setItem("email", email);
-            setUser({ email, name, userType: "admin" });
+            localStorage.setItem("email", normalizedEmail);
+            setUser({ email: normalizedEmail, name, userType: "admin" });
             navigate("/admin/dashboard");
         }
-        // DECANO - Validación específica
-        else if (email.toLowerCase() === "decano@escuelaing.edu.co") {
-            // Validación simple de contraseña (puedes mejorar esto)
-            // Por ahora acepta cualquier contraseña como ID del decano
-            // En producción, aquí validarías contra una base de datos
-
+        // DECANO
+        else if (normalizedEmail === "decano@escuelaing.edu.co") {
             role = "dean";
             localStorage.setItem("role", role);
-            localStorage.setItem("email", email);
+            localStorage.setItem("email", normalizedEmail);
 
-            setUser({ email, userType: "dean" });
-
-            // Redirigir a la selección de facultad
+            setUser({ email: normalizedEmail, userType: "dean" });
             navigate("/faculty-selection");
         }
         // EMAIL NO RECONOCIDO
         else {
-            alert("Correo institucional no reconocido. Usa un dominio válido:\n" +
+            alert(
+                "Correo institucional no reconocido. Usa un dominio válido:\n" +
                 "- Estudiantes: @mail.escuelaing.edu.co\n" +
                 "- Profesores: @pro.escuelaing.edu.co\n" +
                 "- Administradores: @admi.escuelaing.edu.co\n" +
-                "- Decanos: Decano@escuelaing.edu.co");
+                "- Decanos: decano@escuelaing.edu.co"
+            );
         }
     };
 
