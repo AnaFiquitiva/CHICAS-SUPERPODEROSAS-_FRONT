@@ -1,0 +1,132 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(17, 24, 39, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 2rem;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.25s ease;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.modal-header h2 {
+    font-size: 1.25rem;
+    color: #1e3a8a;
+    font-weight: 700;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6b7280;
+    transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+    color: #ef4444;
+}
+
+.subject-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+.subject-status {
+    text-align: right;
+    margin-bottom: 1rem;
+}
+
+.status-tag {
+    padding: 0.3rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+/* ===========================
+   ETIQUETAS DE ESTADO (Tags)
+   =========================== */
+
+.status-tag.aprobada {
+    background-color: #dcfce7; /* verde claro */
+    color: #166534; /* verde oscuro */
+}
+
+.status-tag.cursando {
+    background-color: #dbeafe; /* azul claro */
+    color: #1e3a8a; /* azul fuerte */
+}
+
+.status-tag.pendiente {
+    background-color: #f3f4f6; /* gris claro */
+    color: #374151; /* gris oscuro */
+}
+
+.status-tag.perdida {
+    background-color: #fee2e2; /* rojo claro */
+    color: #991b1b; /* rojo oscuro */
+}
+
+.status-tag.bloqueada {
+    background-color: #fef3c7; /* naranja/amarillo claro */
+    color: #92400e; /* naranja oscuro */
+}
+
+
+.subject-details p {
+    margin: 0.4rem 0;
+    color: #374151;
+    font-size: 0.95rem;
+}
+
+.subject-prerequisites {
+    margin-top: 1.5rem;
+}
+
+.subject-prerequisites h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e3a8a;
+    margin-bottom: 0.5rem;
+}
+
+.prereq-tag {
+    display: inline-block;
+    background-color: #f1f5f9;
+    color: #1e293b;
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
