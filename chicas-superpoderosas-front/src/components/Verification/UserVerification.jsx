@@ -41,20 +41,25 @@ const UserVerification = ({ setUser }) => {
             navigate("/teacher/dashboard");
         }
         // ADMINISTRADOR
+        // ADMINISTRADOR
         else if (normalizedEmail.includes("@admi.escuelaing.edu.co")) {
             role = "admin";
+            const adminName = getNameFromEmail(normalizedEmail);
             localStorage.setItem("role", role);
+            localStorage.setItem("name", adminName);
             localStorage.setItem("email", normalizedEmail);
-            setUser({ email: normalizedEmail, name, userType: "admin" });
+            setUser({ email: normalizedEmail, name: adminName, userType: "admin" });
             navigate("/admin/dashboard");
         }
         // DECANO
         else if (normalizedEmail === "decano@escuelaing.edu.co") {
             role = "dean";
+            const deanName = "Dr. Carlos Rodríguez";
             localStorage.setItem("role", role);
+            localStorage.setItem("name", deanName);
             localStorage.setItem("email", normalizedEmail);
 
-            setUser({ email: normalizedEmail, userType: "dean" });
+            setUser({ email: normalizedEmail, name: deanName, userType: "dean" });
             navigate("/faculty-selection");
         }
         // EMAIL NO RECONOCIDO

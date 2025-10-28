@@ -30,7 +30,7 @@ export default function DeanDashboard({ dean, onNavigate, onLogout }) {
                 navigate("/dean/groups");
                 break;
             case "⚙️ Configuración":
-                navigate("/dean/settings");
+                navigate("/dean/configuration");
                 break;
             default:
                 break;

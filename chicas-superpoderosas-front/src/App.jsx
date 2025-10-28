@@ -272,7 +272,11 @@ function AppRoutes() {
                 path="/dean/configuration"
                 element={
                     <DeanPrivateRoute>
-                        <DeanConfigurationPage />
+                        <DeanConfigurationPage
+                            user={user}
+                            onNavigate={handleDeanNavigate}
+                            onLogout={handleLogout}
+                        />
                     </DeanPrivateRoute>
                 }
             />
