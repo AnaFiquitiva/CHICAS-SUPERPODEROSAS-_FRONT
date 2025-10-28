@@ -1,20 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./UserVerification.css";
-import logoEci from "../../assets/logo-eci.png";
-import { getNameFromEmail } from "../ui/utils";
-import { User } from "../../types";
+import logoEci from '../../assets/logo-eci.png';
+import { getNameFromEmail } from "../Student/utils";
 
-interface Props {
-    setUser: (user: User) => void;
-}
-
-const UserVerification: React.FC<Props> = ({ setUser }) => {
+const UserVerification = ({ setUser }) => {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
 
         if (!email || !password) {
@@ -22,36 +17,48 @@ const UserVerification: React.FC<Props> = ({ setUser }) => {
             return;
         }
 
+        // Normalizar email: quitar espacios y pasar a minúsculas
         const normalizedEmail = email.trim().toLowerCase();
         const name = getNameFromEmail(normalizedEmail);
-        let role: User["userType"] | null = null;
+        let role = null;
 
+        // ESTUDIANTE
         if (normalizedEmail.includes("@mail.escuelaing.edu.co")) {
             role = "student";
             localStorage.setItem("role", role);
             localStorage.setItem("name", name);
             localStorage.setItem("email", normalizedEmail);
+
             setUser({ email: normalizedEmail, name, userType: "student" });
             navigate("/student/dashboard");
-        } else if (normalizedEmail.includes("@pro.escuelaing.edu.co")) {
+        }
+        // PROFESOR
+        else if (normalizedEmail.includes("@pro.escuelaing.edu.co")) {
             role = "teacher";
             localStorage.setItem("role", role);
             localStorage.setItem("email", normalizedEmail);
             setUser({ email: normalizedEmail, name, userType: "teacher" });
             navigate("/teacher/dashboard");
-        } else if (normalizedEmail.includes("@admi.escuelaing.edu.co")) {
+        }
+        // ADMINISTRADOR
+        else if (normalizedEmail.includes("@admi.escuelaing.edu.co")) {
             role = "admin";
             localStorage.setItem("role", role);
             localStorage.setItem("email", normalizedEmail);
             setUser({ email: normalizedEmail, name, userType: "admin" });
             navigate("/admin/dashboard");
-        } else if (normalizedEmail === "decano@escuelaing.edu.co") {
+        }
+        // DECANO
+        else if (normalizedEmail === "decano@escuelaing.edu.co") {
             role = "dean";
             localStorage.setItem("role", role);
             localStorage.setItem("email", normalizedEmail);
+
             setUser({ email: normalizedEmail, userType: "dean" });
             navigate("/faculty-selection");
-        } else {
+        }
+        // EMAIL NO RECONOCIDO
+        else {
             alert(
                 "Correo institucional no reconocido. Usa un dominio válido:\n" +
                 "- Estudiantes: @mail.escuelaing.edu.co\n" +
@@ -66,9 +73,7 @@ const UserVerification: React.FC<Props> = ({ setUser }) => {
         <div className="login-container">
             <img src={logoEci} alt="Logo institucional ECI" className="eci-logo large" />
             <div className="login-card">
-                <h1 className="login-title">
-                    Bienvenido a <span>SIRHA</span>
-                </h1>
+                <h1 className="login-title">Bienvenido a <span>SIRHA</span></h1>
                 <p className="login-subtitle">Sistema de Reasignación de Horarios Académicos</p>
 
                 <form onSubmit={handleSubmit}>
@@ -94,13 +99,11 @@ const UserVerification: React.FC<Props> = ({ setUser }) => {
                         />
                     </div>
 
-                    <button type="submit" className="btn-login">
-                        Iniciar sesión
-                    </button>
+                    <button type="submit" className="btn-login">Iniciar sesión</button>
                 </form>
 
                 <p className="forgot-password">
-                    ¿Olvidaste tu contraseña? <button className="link-button">Recupérala aquí</button>
+                    ¿Olvidaste tu contraseña? <a href="#">Recupérala aquí</a>
                 </p>
             </div>
         </div>
