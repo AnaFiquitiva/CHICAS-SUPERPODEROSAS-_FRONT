@@ -1,195 +1,299 @@
 import React, { useState } from "react";
+import {
+    DocumentIcon,
+    EyeIcon,
+    ClockIcon,
+    CrossIcon,
+    HourglassIcon,
+} from "./Icons";
 import "./StudentRequests.css";
 import TopBar from "./TopBar";
-import {
-    CheckIcon,
-    ClockIcon,
-    HourglassIcon,
-    CrossIcon,
-    DocumentIcon,
-} from "./Icons";
 
-const StudentRequests = () => {
-    const [filter, setFilter] = useState("Todas");
-    const [showForm, setShowForm] = useState(false);
-    const [showDetails, setShowDetails] = useState(null);
-    const [requests, setRequests] = useState([
-        {
-            id: "RAD-000001",
-            type: "Cambio de Grupo",
-            description:
-                "Solicito cambio de grupo debido a conflicto de horarios con otra materia inscrita.",
-            observations: "El coordinador aprobó el cambio solicitado.",
-            date: "15/10/24",
-            status: "Aprobada",
-        },
-        {
-            id: "RAD-000002",
-            type: "Cambio de Materia",
-            description:
-                "Solicito cambio de materia electiva por disponibilidad de cupos.",
-            observations: "Pendiente de revisión por parte del área académica.",
-            date: "18/10/24",
-            status: "Pendiente",
-        },
-        {
-            id: "RAD-000003",
-            type: "Validación de Materia",
-            description: "Solicito validación de materia cursada en otra institución.",
-            observations: "Rechazada por falta de soporte documental.",
-            date: "10/10/24",
-            status: "Rechazada",
-        },
-        {
-            id: "RAD-000004",
-            type: "Retiro de Materia",
-            description: "Solicito retiro de materia por motivos personales de salud.",
-            observations: "En proceso de revisión médica.",
-            date: "22/10/24",
-            status: "En Revisión",
-        },
-    ]);
+const mockRequests = [
+    {
+        id: "RAD-000001",
+        type: "Cambio de Grupo",
+        subject: "Estructuras de Datos - Grupo 3",
+        subjectCode: "ICOM-2045",
+        requestDate: "15/10/24",
+        deadline: "20/10/24",
+        priority: "Alta",
+        status: "Pendiente",
+        description:
+            "El estudiante solicita cambio de grupo debido a conflicto de horario con otra asignatura obligatoria.",
+    },
+    {
+        id: "RAD-000002",
+        type: "Cambio de Materia",
+        subject: "Inteligencia Artificial",
+        subjectCode: "ICOM-3050",
+        requestDate: "18/10/24",
+        deadline: "25/10/24",
+        priority: "Media",
+        status: "Tramitada",
+        description:
+            "Se solicita el cambio de materia por disponibilidad de horarios en el nuevo curso de Machine Learning.",
+    },
+    {
+        id: "RAD-000003",
+        type: "Validación de Materia",
+        subject: "Cálculo Diferencial - Universidad X",
+        subjectCode: "MATE-1001",
+        requestDate: "20/10/24",
+        deadline: "15/11/24",
+        priority: "Baja",
+        status: "Rechazada",
+        description:
+            "El estudiante busca validar la materia cursada en otra universidad. La solicitud fue rechazada por falta de equivalencia en los contenidos.",
+    },
+    {
+        id: "RAD-000004",
+        type: "Retiro de Materia",
+        subject: "Física II",
+        subjectCode: "FISI-2002",
+        requestDate: "22/10/24",
+        deadline: "27/10/24",
+        priority: "Alta",
+        status: "En Revisión",
+        description:
+            "El estudiante desea retirar la materia por motivos personales. La solicitud se encuentra en proceso de revisión.",
+    },
+];
 
-    const filteredRequests =
-        filter === "Todas" ? requests : requests.filter((r) => r.status === filter);
+const stats = [
+    {
+        label: "Total Solicitudes",
+        value: 4,
+        icon: <DocumentIcon size={28} color="#990000" />,
+        color: "#990000",
+    },
+    {
+        label: "En Revisión",
+        value: "1 de 4",
+        icon: <ClockIcon size={28} color="#3B82F6" />,
+        color: "#3B82F6",
+        percentage: "25%",
+    },
+    {
+        label: "Pendientes",
+        value: "1 de 4",
+        icon: <HourglassIcon size={28} color="#F59E0B" />,
+        color: "#F59E0B",
+        percentage: "25%",
+    },
+    {
+        label: "Rechazadas",
+        value: "1 de 4",
+        icon: <CrossIcon size={28} color="#EF4444" />,
+        color: "#EF4444",
+        percentage: "25%",
+    },
+];
 
-    const counts = {
-        total: requests.length,
-        aprobadas: requests.filter((r) => r.status === "Aprobada").length,
-        pendientes: requests.filter((r) => r.status === "Pendiente").length,
-        rechazadas: requests.filter((r) => r.status === "Rechazada").length,
-        revision: requests.filter((r) => r.status === "En Revisión").length,
+export default function StudentRequests() {
+    const [activeTab, setActiveTab] = useState("Todas");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedPeriod, setSelectedPeriod] = useState("2024-2");
+    const [selectedRequest, setSelectedRequest] = useState(null);
+
+    const tabs = [
+        { name: "Todas", count: 4 },
+        { name: "Pendientes", count: 1 },
+        { name: "En Revisión", count: 1 },
+        { name: "Aprobadas", count: 1 },
+        { name: "Rechazadas", count: 1 },
+    ];
+
+    const filteredRequests = mockRequests.filter((req) => {
+        const matchesSearch =
+            req.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            req.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            req.id.toLowerCase().includes(searchTerm.toLowerCase());
+
+        if (activeTab === "Todas") return matchesSearch;
+        return matchesSearch && req.status === activeTab.slice(0, -1);
+    });
+
+    const getPriorityClass = (priority) => {
+        switch (priority) {
+            case "Alta":
+                return "priority-high";
+            case "Media":
+                return "priority-medium";
+            case "Baja":
+                return "priority-low";
+            default:
+                return "";
+        }
     };
 
-    const handleNewRequest = (e) => {
-        e.preventDefault();
-        const form = e.target;
-        const newReq = {
-            id: `RAD-${(requests.length + 1).toString().padStart(6, "0")}`,
-            type: form.type.value,
-            description: form.description.value,
-            observations: form.observations.value,
-            date: new Date().toLocaleDateString("es-CO"),
-            status: "Pendiente",
-        };
-        setRequests([newReq, ...requests]);
-        setShowForm(false);
-        alert("✅ Solicitud creada correctamente");
+    const getStatusClass = (status) => {
+        switch (status) {
+            case "Pendiente":
+                return "status-pending";
+            case "Tramitada":
+                return "status-approved";
+            case "Rechazada":
+                return "status-rejected";
+            case "En Revisión":
+                return "status-review";
+            default:
+                return "";
+        }
     };
 
     return (
-        <>
+        <div className="requests-container">
             <TopBar />
 
-            <div className="requests-container">
-                <div className="requests-header">
-                    <div>
-                        <h2>Mis Solicitudes Académicas</h2>
-                        <p>Crea y gestiona tus solicitudes académicas</p>
+            {/* Header */}
+            <div className="requests-header">
+                <div className="header-content">
+                    <h1 className="header-title">Mis Solicitudes Académicas</h1>
+                    <p className="header-subtitle">
+                        Crea y gestiona tus solicitudes académicas
+                    </p>
+                </div>
+                <button className="btn-new-request">+ Nueva Solicitud</button>
+            </div>
+
+            {/* Stats */}
+            <div className="stats-grid">
+                {stats.map((stat, idx) => (
+                    <div key={idx} className="stat-card">
+                        <div
+                            className="stat-icon"
+                            style={{ backgroundColor: `${stat.color}15` }}
+                        >
+                            {stat.icon}
+                        </div>
+                        <div className="stat-content">
+                            <div className="stat-label">{stat.label}</div>
+                            <div className="stat-value">{stat.value}</div>
+                            {stat.percentage && (
+                                <div
+                                    className="stat-percentage"
+                                    style={{ color: stat.color }}
+                                >
+                                    {stat.percentage}
+                                </div>
+                            )}
+                        </div>
                     </div>
-                    <button className="btn-new" onClick={() => setShowForm(true)}>
-                        + Nueva Solicitud
+                ))}
+            </div>
+
+            {/* Search Bar */}
+            <div className="search-bar">
+                <div className="search-input-wrapper">
+                    <svg
+                        className="search-icon-svg"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="#666"
+                        strokeWidth="2"
+                    >
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="m21 21-4.35-4.35" />
+                    </svg>
+                    <input
+                        type="text"
+                        className="search-input"
+                        placeholder="Buscar por radicado, tipo o descripción..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+                <div className="filter-controls">
+                    <select
+                        className="period-select"
+                        value={selectedPeriod}
+                        onChange={(e) => setSelectedPeriod(e.target.value)}
+                    >
+                        <option value="2024-2">2024-2</option>
+                        <option value="2024-1">2024-1</option>
+                        <option value="2023-2">2023-2</option>
+                    </select>
+                </div>
+            </div>
+
+            {/* Tabs */}
+            <div className="tabs-container">
+                {tabs.map((tab) => (
+                    <button
+                        key={tab.name}
+                        className={`tab ${activeTab === tab.name ? "tab-active" : ""}`}
+                        onClick={() => setActiveTab(tab.name)}
+                    >
+                        {tab.name} ({tab.count})
                     </button>
-                </div>
+                ))}
+            </div>
 
-                {/* === Cards resumen === */}
-                <div className="requests-cards">
-                    <div className="card">
-                        <div className="card-icon total">
-                            <DocumentIcon size={32} color="#003876" />
-                        </div>
-                        <p>Total Solicitudes</p>
-                        <h3>{counts.total}</h3>
-                    </div>
-
-                    <div className="card">
-                        <div className="card-icon revision">
-                            <ClockIcon size={32} color="#0072f5" />
-                        </div>
-                        <p>En Revisión</p>
-                        <h3>
-                            {counts.revision} de {counts.total}
-                        </h3>
-                    </div>
-
-                    <div className="card">
-                        <div className="card-icon pendiente">
-                            <HourglassIcon size={32} color="#ffa500" />
-                        </div>
-                        <p>Pendientes</p>
-                        <h3>
-                            {counts.pendientes} de {counts.total}
-                        </h3>
-                    </div>
-
-                    <div className="card">
-                        <div className="card-icon rechazada">
-                            <CrossIcon size={32} color="#ff4c4c" />
-                        </div>
-                        <p>Rechazadas</p>
-                        <h3>
-                            {counts.rechazadas} de {counts.total}
-                        </h3>
-                    </div>
-                </div>
-
-                {/* === Tabs === */}
-                <div className="requests-tabs">
-                    {["Todas", "Pendiente", "En Revisión", "Aprobada", "Rechazada"].map(
-                        (tab) => (
-                            <button
-                                key={tab}
-                                className={`tab ${filter === tab ? "active" : ""}`}
-                                onClick={() => setFilter(tab)}
-                            >
-                                {tab === "Todas"
-                                    ? `Todas (${counts.total})`
-                                    : `${tab}s (${
-                                        requests.filter((r) => r.status === tab).length
-                                    })`}
-                            </button>
-                        )
-                    )}
-                </div>
-
-                {/* === Tabla de solicitudes === */}
+            {/* Table */}
+            <div className="table-container">
                 <table className="requests-table">
                     <thead>
                     <tr>
-                        <th>N° Radicado</th>
-                        <th>Tipo de Solicitud</th>
-                        <th>Descripción</th>
-                        <th>Observaciones</th>
-                        <th>Fecha Creación</th>
+                        <th>Radicado</th>
+                        <th>Tipo</th>
+                        <th>Asunto</th>
+                        <th>Fecha</th>
+                        <th>Vencimiento</th>
+                        <th>Prioridad</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {filteredRequests.map((req) => (
-                        <tr key={req.id}>
+                    {filteredRequests.map((request) => (
+                        <tr key={request.id}>
                             <td>
-                                <span className="radicado">{req.id}</span>
+                                <div className="cell-with-icon">
+                                    <DocumentIcon size={18} color="#666" />
+                                    <span>{request.id}</span>
+                                </div>
                             </td>
-                            <td>{req.type}</td>
-                            <td>{req.description}</td>
-                            <td>{req.observations}</td>
-                            <td>{req.date}</td>
+                            <td>{request.type}</td>
+                            <td>
+                                <div className="subject-cell">
+                                    <div className="subject-name">{request.subject}</div>
+                                    {request.subjectCode && (
+                                        <div className="subject-code">
+                                            {request.subjectCode}
+                                        </div>
+                                    )}
+                                </div>
+                            </td>
+                            <td>{request.requestDate}</td>
+                            <td>{request.deadline}</td>
                             <td>
                                     <span
-                                        className={`status ${req.status
-                                            .toLowerCase()
-                                            .replace(" ", "-")}`}
+                                        className={`priority-badge ${getPriorityClass(
+                                            request.priority
+                                        )}`}
                                     >
-                                        {req.status}
+                                        {request.priority}
+                                    </span>
+                            </td>
+                            <td>
+                                    <span
+                                        className={`status-badge ${getStatusClass(
+                                            request.status
+                                        )}`}
+                                    >
+                                        {request.status}
                                     </span>
                             </td>
                             <td>
                                 <button
-                                    className="details-btn"
-                                    onClick={() => setShowDetails(req)}
+                                    className="btn-view"
+                                    onClick={() => setSelectedRequest(request)}
                                 >
-                                    👁 Ver Detalles
+                                    <EyeIcon size={16} color="#666" /> Ver
                                 </button>
                             </td>
                         </tr>
@@ -198,79 +302,31 @@ const StudentRequests = () => {
                 </table>
             </div>
 
-            {/* === Modal Nueva Solicitud === */}
-            {showForm && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <h3>Nueva Solicitud Académica</h3>
-                        <form onSubmit={handleNewRequest}>
-                            <label>Tipo de Solicitud</label>
-                            <select name="type" required>
-                                <option value="">Seleccionar...</option>
-                                <option value="Cambio de Grupo">Cambio de Grupo</option>
-                                <option value="Cambio de Materia">Cambio de Materia</option>
-                                <option value="Retiro de Materia">Retiro de Materia</option>
-                                <option value="Validación de Materia">
-                                    Validación de Materia
-                                </option>
-                            </select>
-
-                            <label>Descripción</label>
-                            <textarea
-                                name="description"
-                                rows="3"
-                                placeholder="Describe brevemente el motivo..."
-                                required
-                            ></textarea>
-
-                            <label>Observaciones</label>
-                            <textarea
-                                name="observations"
-                                rows="2"
-                                placeholder="Añade observaciones adicionales (opcional)"
-                            ></textarea>
-
-                            <div className="modal-actions">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowForm(false)}
-                                    className="cancel-btn"
-                                >
-                                    Cancelar
-                                </button>
-                                <button type="submit" className="btn-primary">
-                                    Enviar Solicitud
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
-
-            {/* === Modal Detalles === */}
-            {showDetails && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <h3>Detalles de la Solicitud</h3>
-                        <p><b>N° Radicado:</b> {showDetails.id}</p>
-                        <p><b>Tipo:</b> {showDetails.type}</p>
-                        <p><b>Descripción:</b> {showDetails.description}</p>
-                        <p><b>Observaciones:</b> {showDetails.observations}</p>
-                        <p><b>Estado:</b> {showDetails.status}</p>
-                        <p><b>Fecha de Creación:</b> {showDetails.date}</p>
-                        <div className="modal-actions">
-                            <button
-                                onClick={() => setShowDetails(null)}
-                                className="btn-primary"
-                            >
-                                Cerrar
-                            </button>
+            {/* 🧾 Panel de Detalle */}
+            {selectedRequest && (
+                <div className="request-panel-overlay">
+                    <div className="request-panel">
+                        <button
+                            className="close-panel"
+                            onClick={() => setSelectedRequest(null)}
+                        >
+                            ✕
+                        </button>
+                        <h2>Detalles de la Solicitud</h2>
+                        <div className="request-detail">
+                            <p><strong>Radicado:</strong> {selectedRequest.id}</p>
+                            <p><strong>Tipo:</strong> {selectedRequest.type}</p>
+                            <p><strong>Materia:</strong> {selectedRequest.subject}</p>
+                            <p><strong>Código:</strong> {selectedRequest.subjectCode}</p>
+                            <p><strong>Fecha de Solicitud:</strong> {selectedRequest.requestDate}</p>
+                            <p><strong>Vencimiento:</strong> {selectedRequest.deadline}</p>
+                            <p><strong>Prioridad:</strong> {selectedRequest.priority}</p>
+                            <p><strong>Estado:</strong> {selectedRequest.status}</p>
+                            <p><strong>Descripción:</strong> {selectedRequest.description}</p>
                         </div>
                     </div>
                 </div>
             )}
-        </>
+        </div>
     );
-};
-
-export default StudentRequests;
+}
