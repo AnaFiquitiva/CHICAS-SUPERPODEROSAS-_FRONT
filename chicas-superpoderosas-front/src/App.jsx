@@ -6,18 +6,27 @@ import UserVerification from "./components/Verification/UserVerification";
 import FacultySelection from "./components/Verification/FacultySelection";
 
 // Dashboards
-import StudentDashboard from "./components/Student/StudentDashboard";
+import DashboardApp from "./components/Student/DashboardApp.tsx";
 import DeanDashboard from "./components/Deanery/DeanDashboard";
+import AdminDashboard from "./components/Administrators/AdminDashboard";
+
+// Admin modules
+import CreateCourse from "./components/Administrators/CreateCourse";
+import CreateCareer from "./components/Administrators/CreateCareer";
+import ViewCourses from "./components/Administrators/ViewCourses";
+import ViewCareers from "./components/Administrators/ViewCareers";
 
 // Student modules
-import StudentSchedule from "./components/Student/StudentSchedule";
-import StudentRequests from "./components/Student/StudentRequests";
-import StudentSemaphore from "./components/Student/StudentSemaphore";
-import StudentGroupManagement from "./components/Student/StudentGroupManagement";
+import ScheduleApp from "./components/Student/ScheduleApp.tsx";
+import RequestsApp from "./components/Student/RequestsApp";
+import GestionMateriasApp from "./components/Student/GestionMateriasApp";
+import SemaforoApp from "./components/Student/SemaforoApp";
 
 // Dean modules
 import DeanRequestsPage from "./components/Deanery/DeanRequestsPage.jsx";
-import DeanStudentsPage from "./components/Deanery/DeanStudentsPage.jsx"; // ✅ nuevo import
+import DeanStudentsPage from "./components/Deanery/DeanStudentsPage.jsx";
+import DeanGroupsPage from "./components/Deanery/DeanGroupsPage.jsx";
+import DeanConfigurationPage from "./components/Deanery/DeanConfigurationPage.jsx";
 
 export default function App() {
     return (
@@ -27,12 +36,11 @@ export default function App() {
     );
 }
 
-// Componente separado para usar useNavigate
 function AppRoutes() {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
-    // Recuperar usuario del localStorage al iniciar
+    // 🔁 Restaurar sesión previa
     useEffect(() => {
         const email = localStorage.getItem("email");
         const name = localStorage.getItem("name");
@@ -44,17 +52,20 @@ function AppRoutes() {
                 setUser({ email, name, userType: "student" });
             } else if (role === "dean") {
                 setUser({ email, userType: "dean", faculty });
+            } else if (role === "admin") {
+                setUser({ email, name, userType: "admin" });
             }
         }
     }, []);
 
+    // 🔓 Cerrar sesión
     const handleLogout = () => {
         setUser(null);
         localStorage.clear();
         navigate("/");
     };
 
-    // Navegación para estudiantes
+    // 📚 Navegación: Estudiante
     const handleStudentNavigate = (module) => {
         switch (module) {
             case "dashboard":
@@ -77,7 +88,7 @@ function AppRoutes() {
         }
     };
 
-    // Navegación para decanos
+    // 🎓 Navegación: Decano
     const handleDeanNavigate = (module) => {
         switch (module) {
             case "dashboard":
@@ -87,32 +98,58 @@ function AppRoutes() {
                 navigate("/dean/requests");
                 break;
             case "informacion-estudiantes":
-                navigate("/dean/students"); // ✅ ahora sí navega correctamente
+                navigate("/dean/students");
                 break;
             case "monitor-grupos":
-                console.log("Navegar a monitor de grupos");
+                navigate("/dean/groups");
                 break;
             case "configuracion":
-                console.log("Navegar a configuración");
+                navigate("/dean/configuration");
                 break;
             default:
                 navigate("/dean/dashboard");
         }
     };
 
-    // Rutas protegidas
+    // 🧑‍💼 Navegación: Administrador
+    const handleAdminNavigate = (module) => {
+        switch (module) {
+            case "dashboard":
+                navigate("/admin/dashboard");
+                break;
+            case "crear-curso":
+                navigate("/admin/create-course");
+                break;
+            case "crear-carrera":
+                navigate("/admin/create-career");
+                break;
+            case "ver-cursos":
+                navigate("/admin/courses");
+                break;
+            case "ver-carreras":
+                navigate("/admin/careers");
+                break;
+            default:
+                navigate("/admin/dashboard");
+        }
+    };
+
+    // 🔐 Rutas privadas
     const StudentPrivateRoute = ({ children }) =>
         user && user.userType === "student" ? children : <Navigate to="/" />;
 
     const DeanPrivateRoute = ({ children }) =>
         user && user.userType === "dean" ? children : <Navigate to="/" />;
 
+    const AdminPrivateRoute = ({ children }) =>
+        user && user.userType === "admin" ? children : <Navigate to="/" />;
+
     return (
         <Routes>
             {/* Login */}
             <Route path="/" element={<UserVerification setUser={setUser} />} />
 
-            {/* Selección de Facultad para Decanos */}
+            {/* Selección de Facultad */}
             <Route
                 path="/faculty-selection"
                 element={
@@ -124,12 +161,12 @@ function AppRoutes() {
                 }
             />
 
-            {/* ========== RUTAS DE ESTUDIANTE ========== */}
+            {/* === ESTUDIANTE === */}
             <Route
                 path="/student/dashboard"
                 element={
                     <StudentPrivateRoute>
-                        <StudentDashboard
+                        <DashboardApp
                             user={user}
                             onNavigate={handleStudentNavigate}
                             onLogout={handleLogout}
@@ -137,12 +174,11 @@ function AppRoutes() {
                     </StudentPrivateRoute>
                 }
             />
-
             <Route
                 path="/student/horario"
                 element={
                     <StudentPrivateRoute>
-                        <StudentSchedule
+                        <ScheduleApp
                             user={user}
                             onNavigate={handleStudentNavigate}
                             onLogout={handleLogout}
@@ -150,12 +186,11 @@ function AppRoutes() {
                     </StudentPrivateRoute>
                 }
             />
-
             <Route
                 path="/student/solicitudes"
                 element={
                     <StudentPrivateRoute>
-                        <StudentRequests
+                        <RequestsApp
                             user={user}
                             onNavigate={handleStudentNavigate}
                             onLogout={handleLogout}
@@ -163,12 +198,11 @@ function AppRoutes() {
                     </StudentPrivateRoute>
                 }
             />
-
             <Route
                 path="/student/semaforo"
                 element={
                     <StudentPrivateRoute>
-                        <StudentSemaphore
+                        <SemaforoApp
                             user={user}
                             onNavigate={handleStudentNavigate}
                             onLogout={handleLogout}
@@ -176,12 +210,11 @@ function AppRoutes() {
                     </StudentPrivateRoute>
                 }
             />
-
             <Route
                 path="/student/gestion-grupos"
                 element={
                     <StudentPrivateRoute>
-                        <StudentGroupManagement
+                        <GestionMateriasApp
                             user={user}
                             onNavigate={handleStudentNavigate}
                             onLogout={handleLogout}
@@ -190,7 +223,7 @@ function AppRoutes() {
                 }
             />
 
-            {/* ========== RUTAS DE DECANO ========== */}
+            {/* === DECANO === */}
             <Route
                 path="/dean/dashboard"
                 element={
@@ -203,28 +236,30 @@ function AppRoutes() {
                     </DeanPrivateRoute>
                 }
             />
+            <Route path="/dean/requests" element={<DeanPrivateRoute><DeanRequestsPage /></DeanPrivateRoute>} />
+            <Route path="/dean/students" element={<DeanPrivateRoute><DeanStudentsPage /></DeanPrivateRoute>} />
+            <Route path="/dean/groups" element={<DeanPrivateRoute><DeanGroupsPage /></DeanPrivateRoute>} />
+            <Route path="/dean/configuration" element={<DeanPrivateRoute><DeanConfigurationPage /></DeanPrivateRoute>} />
 
-            {/* Solicitudes */}
+            {/* === ADMIN === */}
             <Route
-                path="/dean/requests"
+                path="/admin/dashboard"
                 element={
-                    <DeanPrivateRoute>
-                        <DeanRequestsPage />
-                    </DeanPrivateRoute>
+                    <AdminPrivateRoute>
+                        <AdminDashboard
+                            admin={user}
+                            onNavigate={handleAdminNavigate}
+                            onLogout={handleLogout}
+                        />
+                    </AdminPrivateRoute>
                 }
             />
+            <Route path="/admin/create-course" element={<AdminPrivateRoute><CreateCourse admin={user} onNavigate={handleAdminNavigate} onLogout={handleLogout} /></AdminPrivateRoute>} />
+            <Route path="/admin/create-career" element={<AdminPrivateRoute><CreateCareer admin={user} onNavigate={handleAdminNavigate} onLogout={handleLogout} /></AdminPrivateRoute>} />
+            <Route path="/admin/courses" element={<AdminPrivateRoute><ViewCourses admin={user} onNavigate={handleAdminNavigate} onLogout={handleLogout} /></AdminPrivateRoute>} />
+            <Route path="/admin/careers" element={<AdminPrivateRoute><ViewCareers admin={user} onNavigate={handleAdminNavigate} onLogout={handleLogout} /></AdminPrivateRoute>} />
 
-            {/* ✅ Nueva ruta: Información de Estudiantes */}
-            <Route
-                path="/dean/students"
-                element={
-                    <DeanPrivateRoute>
-                        <DeanStudentsPage />
-                    </DeanPrivateRoute>
-                }
-            />
-
-            {/* Redirección para rutas desconocidas */}
+            {/* Redirección */}
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );

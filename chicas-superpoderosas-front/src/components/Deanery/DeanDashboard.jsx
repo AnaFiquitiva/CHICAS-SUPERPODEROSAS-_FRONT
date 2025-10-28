@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../Student/Sidebar";
+import {Sidebar} from "../ui/Sidebar";
+
 
 export default function DeanDashboard({ dean, onNavigate, onLogout }) {
     const navigate = useNavigate();
