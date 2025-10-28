@@ -1,82 +1,5 @@
 import React, { useState, useEffect } from "react";
-
-// Mock Sidebar Component
-function Sidebar({ user, onLogout }) {
-    return (
-        <aside
-            style={{
-                width: "200px",
-                backgroundColor: "#8B0000",
-                color: "white",
-                padding: "30px 20px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                boxShadow: "2px 0 8px rgba(0,0,0,0.1)",
-                position: "sticky",
-                top: 0,
-                height: "100vh",
-            }}
-        >
-            <div style={{ textAlign: "center", marginBottom: "30px" }}>
-                <img
-                    src="https://via.placeholder.com/80x80/fff/990000?text=ECIJG"
-                    alt="Logo"
-                    style={{ width: "80px", marginBottom: "10px" }}
-                />
-                <p style={{ fontSize: "0.75rem", lineHeight: "1.3" }}>
-                    ESCUELA COLOMBIANA<br />DE INGENIERÍA<br />JULIO GARAVITO
-                </p>
-                <p style={{ fontSize: "0.7rem", marginTop: "5px", opacity: 0.9 }}>UNIVERSIDAD</p>
-            </div>
-
-            <div style={{ textAlign: "center", marginBottom: "30px", paddingTop: "20px", borderTop: "1px solid rgba(255,255,255,0.2)" }}>
-                <img
-                    src={user.image}
-                    alt="Usuario"
-                    style={{
-                        width: "60px",
-                        height: "60px",
-                        borderRadius: "50%",
-                        marginBottom: "10px",
-                        border: "2px solid white",
-                    }}
-                />
-                <h4 style={{ fontSize: "0.9rem", marginBottom: "3px" }}>{user.name}</h4>
-                <p style={{ fontSize: "0.75rem", opacity: 0.9 }}>{user.career}</p>
-            </div>
-
-            <nav style={{ width: "100%", flex: 1 }}>
-                <NavItem icon="🏠" text="Inicio" />
-                <NavItem icon="👤" text="Perfil" />
-                <NavItem icon="⚙️" text="Configuración" active />
-            </nav>
-        </aside>
-    );
-}
-
-function NavItem({ icon, text, active }) {
-    return (
-        <div
-            style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                padding: "12px 15px",
-                marginBottom: "5px",
-                borderRadius: "8px",
-                cursor: "pointer",
-                backgroundColor: active ? "rgba(255,255,255,0.15)" : "transparent",
-                transition: "background-color 0.2s",
-            }}
-            onMouseEnter={(e) => !active && (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.1)")}
-            onMouseLeave={(e) => !active && (e.currentTarget.style.backgroundColor = "transparent")}
-        >
-            <span>{icon}</span>
-            <span style={{ fontSize: "0.85rem" }}>{text}</span>
-        </div>
-    );
-}
+import { Home, User, Bell, ChevronLeft, FileText, Users, BarChart3, Settings } from "lucide-react";
 
 // Mock Service
 const DeanRequestService = {
@@ -88,11 +11,15 @@ const DeanRequestService = {
     ],
 };
 
-// Main Component
-export default function DeanRequestsPage() {
+export default function DeanRequestsPage({ user, onNavigate, onLogout }) {
     const [requests, setRequests] = useState([]);
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [filterStatus, setFilterStatus] = useState("Todos");
+    const [notifications] = useState([
+        { id: 1, text: "Nueva solicitud aprobada", read: false },
+        { id: 2, text: "Recordatorio: entregar proyecto final", read: false },
+        { id: 3, text: "Cambio de horario de Matemáticas", read: true }
+    ]);
 
     const mockDean = {
         name: "Dr. Carlos Rodríguez",
@@ -130,127 +57,191 @@ export default function DeanRequestsPage() {
     const rejectedCount = requests.filter(r => r.status === "Rechazada").length;
 
     return (
-        <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "#fffafc" }}>
-            <Sidebar user={mockDean} />
-
-            {/* Contenido principal */}
-            <main style={{ flex: 1, padding: "40px 60px", maxWidth: "1400px" }}>
-                {/* Header con alerta */}
-                <div
-                    style={{
-                        backgroundColor: "#fff3cd",
-                        color: "#856404",
-                        padding: "15px 25px",
-                        borderRadius: "12px",
-                        marginBottom: "30px",
-                        fontWeight: "500",
-                        boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                    }}
-                >
-                    <span style={{ fontSize: "1.2rem" }}>⚠️</span>
-                    <span><strong>¡Atención!</strong> Tienes 2 solicitudes que vencen en menos de 24 horas.</span>
+        <div style={styles.container}>
+            {/* Left Panel - Panel del Decano */}
+            <aside style={styles.leftPanel}>
+                <div style={styles.logoSection}>
+                    <div style={styles.logoBox}>
+                        <span style={styles.logoText}>ESCUELA</span>
+                        <span style={styles.logoText}>COLOMBIANA</span>
+                        <span style={styles.logoText}>DE INGENIERÍA</span>
+                        <span style={styles.logoSubtext}>JULIO GARAVITO</span>
+                    </div>
+                    <div style={styles.universityLabel}>UNIVERSIDAD</div>
                 </div>
 
-                {/* Título */}
-                <div style={{ marginBottom: "30px" }}>
-                    <h1 style={{ color: "#990000", marginBottom: "8px", fontSize: "1.8rem", display: "flex", alignItems: "center", gap: "10px" }}>
-                        <span>🗂️</span> Gestión de Solicitudes
-                    </h1>
-                    <p style={{ color: "#666", fontSize: "0.95rem" }}>
-                        Aquí puedes revisar, aprobar o rechazar las solicitudes académicas pendientes.
-                    </p>
+                <div style={styles.profileSection}>
+                    <img
+                        src={mockDean.image}
+                        alt="Avatar"
+                        style={styles.avatar}
+                    />
+                    <h3 style={styles.userName}>{mockDean.name}</h3>
+                    <p style={styles.userRole}>{mockDean.career}</p>
                 </div>
 
-                {/* Estadísticas */}
-                <div style={{ display: "flex", gap: "20px", marginBottom: "30px", flexWrap: "wrap" }}>
-                    <StatCard title="Solicitudes Pendientes" value={pendingCount} color="#ffe0e0" />
-                    <StatCard title="Solicitudes Hoy" value={approvedCount} color="#d8fdd8" />
-                    <StatCard title="Grupos en Alerta" value={rejectedCount} color="#fff7cc" />
-                </div>
+                <div style={styles.divider}></div>
 
-                {/* Filtros */}
-                <div style={{ marginBottom: "25px", display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                    <FilterButton active={filterStatus === "Todos"} onClick={() => setFilterStatus("Todos")}>
-                        Todos
-                    </FilterButton>
-                    <FilterButton active={filterStatus === "Pendiente"} onClick={() => setFilterStatus("Pendiente")}>
-                        Pendientes
-                    </FilterButton>
-                    <FilterButton active={filterStatus === "Aprobada"} onClick={() => setFilterStatus("Aprobada")}>
-                        Aprobadas
-                    </FilterButton>
-                    <FilterButton active={filterStatus === "Rechazada"} onClick={() => setFilterStatus("Rechazada")}>
-                        Rechazadas
-                    </FilterButton>
-                </div>
+                <nav style={styles.navSection}>
+                    <NavItem
+                        icon={<Home size={18} />}
+                        text="Inicio"
+                        onClick={() => onNavigate && onNavigate("dashboard")}
+                    />
+                    <NavItem
+                        icon={<FileText size={18} />}
+                        text="Solicitudes"
+                        active
+                    />
+                    <NavItem
+                        icon={<Users size={18} />}
+                        text="Estudiantes"
+                        onClick={() => onNavigate && onNavigate("informacion-estudiantes")}
+                    />
+                    <NavItem
+                        icon={<BarChart3 size={18} />}
+                        text="Grupos"
+                        onClick={() => onNavigate && onNavigate("monitor-grupos")}
+                    />
+                    <NavItem
+                        icon={<Settings size={18} />}
+                        text="Configuración"
+                        onClick={() => onNavigate && onNavigate("configuracion")}
+                    />
+                </nav>
 
-                {/* Tabla */}
-                <div
-                    style={{
-                        backgroundColor: "white",
-                        borderRadius: "16px",
-                        boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-                        overflow: "hidden",
-                    }}
-                >
-                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                        <thead>
-                        <tr style={{ backgroundColor: "#990000", color: "white" }}>
-                            <th style={headerStyle}>ID</th>
-                            <th style={headerStyle}>Estudiante</th>
-                            <th style={headerStyle}>Tipo</th>
-                            <th style={headerStyle}>Fecha</th>
-                            <th style={headerStyle}>Estado</th>
-                            <th style={headerStyle}>Acciones</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {filteredRequests.map((request, index) => (
-                            <tr
-                                key={request.id}
-                                style={{
-                                    backgroundColor: index % 2 === 0 ? "#fafafa" : "white",
-                                    transition: "background-color 0.2s",
-                                }}
-                                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f0f0f0")}
-                                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = index % 2 === 0 ? "#fafafa" : "white")}
-                            >
-                                <td style={cellStyle}>{request.id}</td>
-                                <td style={cellStyle}>{request.student}</td>
-                                <td style={cellStyle}>{request.type}</td>
-                                <td style={cellStyle}>{request.date}</td>
-                                <td style={cellStyle}>
-                                    <StatusBadge status={request.status} />
-                                </td>
-                                <td style={cellStyle}>
-                                    <button
-                                        onClick={() => handleOpenModal(request)}
-                                        style={{
-                                            backgroundColor: "#990000",
-                                            color: "white",
-                                            border: "none",
-                                            padding: "8px 20px",
-                                            borderRadius: "8px",
-                                            cursor: "pointer",
-                                            fontSize: "0.85rem",
-                                            fontWeight: "500",
-                                            transition: "background-color 0.2s",
-                                        }}
-                                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#770000")}
-                                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#990000")}
-                                    >
-                                        Ver Detalle
-                                    </button>
-                                </td>
-                            </tr>
+                <div style={styles.divider}></div>
+
+                <div style={styles.notificationsSection}>
+                    <div style={styles.notificationsHeader}>
+                        <Bell size={16} color="#fff" />
+                        <span style={styles.notificationsTitle}>Notificaciones</span>
+                    </div>
+                    <div style={styles.notificationsList}>
+                        {notifications.map((notif) => (
+                            <div key={notif.id} style={styles.notificationItem}>
+                                <span style={styles.notificationText}>{notif.text}</span>
+                            </div>
                         ))}
-                        </tbody>
-                    </table>
+                    </div>
                 </div>
-            </main>
+            </aside>
+
+            {/* Main Content Wrapper */}
+            <div style={styles.contentWrapper}>
+                {/* Header */}
+                <header style={styles.header}>
+                    <div style={styles.headerLeft}>
+                        <button
+                            style={styles.backButton}
+                            onClick={() => onNavigate && onNavigate("dashboard")}
+                            title="Volver"
+                        >
+                            <ChevronLeft size={20} />
+                        </button>
+                        <span style={styles.headerTitle}>Julio Garavito · SIRHA</span>
+                    </div>
+                    <div style={styles.headerRight}>
+                        <button
+                            style={styles.iconButton}
+                            onClick={() => onNavigate && onNavigate("gestionar-solicitudes")}
+                            title="Solicitudes"
+                        >
+                            <FileText size={20} />
+                        </button>
+                        <button
+                            style={styles.iconButton}
+                            onClick={() => alert("Notificaciones - Próximamente")}
+                            title="Notificaciones"
+                        >
+                            <Bell size={20} />
+                        </button>
+                        <button
+                            style={styles.iconButton}
+                            onClick={() => alert("Perfil - Próximamente")}
+                            title="Perfil"
+                        >
+                            <User size={20} />
+                        </button>
+                        <button
+                            style={styles.iconButton}
+                            onClick={() => onNavigate && onNavigate("dashboard")}
+                            title="Inicio"
+                        >
+                            <Home size={20} />
+                        </button>
+                    </div>
+                </header>
+
+                {/* Main Content */}
+                <main style={styles.main}>
+                    {/* Header con alerta */}
+                    <div style={styles.alertBox}>
+                        <span style={{ fontSize: "1.2rem" }}>⚠️</span>
+                        <span><strong>¡Atención!</strong> Tienes 2 solicitudes que vencen en menos de 24 horas.</span>
+                    </div>
+
+                    {/* Título */}
+                    <div style={styles.titleSection}>
+                        <h1 style={styles.pageTitle}>
+                            <FileText size={32} style={{ marginRight: "12px" }} />
+                            Gestión de Solicitudes
+                        </h1>
+                        <p style={styles.pageSubtitle}>
+                            Aquí puedes revisar, aprobar o rechazar las solicitudes académicas pendientes.
+                        </p>
+                    </div>
+
+                    {/* Estadísticas */}
+                    <div style={styles.statsGrid}>
+                        <StatCard title="Solicitudes Pendientes" value={pendingCount} color="#ffe0e0" />
+                        <StatCard title="Solicitudes Hoy" value={approvedCount} color="#d8fdd8" />
+                        <StatCard title="Grupos en Alerta" value={rejectedCount} color="#fff7cc" />
+                    </div>
+
+                    {/* Filtros */}
+                    <div style={styles.filtersContainer}>
+                        <FilterButton active={filterStatus === "Todos"} onClick={() => setFilterStatus("Todos")}>
+                            Todos
+                        </FilterButton>
+                        <FilterButton active={filterStatus === "Pendiente"} onClick={() => setFilterStatus("Pendiente")}>
+                            Pendientes
+                        </FilterButton>
+                        <FilterButton active={filterStatus === "Aprobada"} onClick={() => setFilterStatus("Aprobada")}>
+                            Aprobadas
+                        </FilterButton>
+                        <FilterButton active={filterStatus === "Rechazada"} onClick={() => setFilterStatus("Rechazada")}>
+                            Rechazadas
+                        </FilterButton>
+                    </div>
+
+                    {/* Tabla */}
+                    <div style={styles.tableContainer}>
+                        <table style={styles.table}>
+                            <thead>
+                            <tr style={styles.tableHeader}>
+                                <th style={styles.headerCell}>ID</th>
+                                <th style={styles.headerCell}>Estudiante</th>
+                                <th style={styles.headerCell}>Tipo</th>
+                                <th style={styles.headerCell}>Fecha</th>
+                                <th style={styles.headerCell}>Estado</th>
+                                <th style={styles.headerCell}>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {filteredRequests.map((request, index) => (
+                                <TableRow
+                                    key={request.id}
+                                    request={request}
+                                    index={index}
+                                    onOpenModal={handleOpenModal}
+                                />
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </main>
+            </div>
 
             {/* Modal */}
             {selectedRequest && (
@@ -264,57 +255,97 @@ export default function DeanRequestsPage() {
     );
 }
 
-function StatCard({ title, value, color }) {
+function NavItem({ icon, text, active, onClick }) {
+    const [isHovered, setIsHovered] = useState(false);
+
     return (
         <div
+            onClick={onClick}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
             style={{
-                backgroundColor: color,
-                padding: "20px 25px",
-                borderRadius: "14px",
-                minWidth: "200px",
-                flex: "1",
-                boxShadow: "0 3px 8px rgba(0,0,0,0.06)",
-                transition: "transform 0.2s",
+                ...styles.navItem,
+                backgroundColor: active ? "rgba(255,255,255,0.2)" : isHovered ? "rgba(255,255,255,0.1)" : "transparent",
+                cursor: onClick ? "pointer" : "default",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-3px)")}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
         >
-            <h4 style={{ color: "#555", fontSize: "0.9rem", marginBottom: "8px", fontWeight: "600" }}>{title}</h4>
-            <p style={{ fontSize: "2rem", fontWeight: "700", color: "#333", margin: 0 }}>{value}</p>
+            <span style={{ color: "#fff" }}>{icon}</span>
+            <span style={styles.navText}>{text}</span>
+        </div>
+    );
+}
+
+function StatCard({ title, value, color }) {
+    const [isHovered, setIsHovered] = useState(false);
+
+    return (
+        <div
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            style={{
+                ...styles.statCard,
+                backgroundColor: color,
+                transform: isHovered ? "translateY(-3px)" : "translateY(0)",
+            }}
+        >
+            <h4 style={styles.statTitle}>{title}</h4>
+            <p style={styles.statValue}>{value}</p>
         </div>
     );
 }
 
 function FilterButton({ children, active, onClick }) {
+    const [isHovered, setIsHovered] = useState(false);
+
     return (
         <button
             onClick={onClick}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
             style={{
-                padding: "10px 20px",
-                borderRadius: "8px",
+                ...styles.filterButton,
                 border: active ? "2px solid #990000" : "2px solid #ddd",
                 backgroundColor: active ? "#990000" : "white",
                 color: active ? "white" : "#555",
-                cursor: "pointer",
                 fontWeight: active ? "600" : "500",
-                fontSize: "0.9rem",
-                transition: "all 0.2s",
-            }}
-            onMouseEnter={(e) => {
-                if (!active) {
-                    e.currentTarget.style.borderColor = "#990000";
-                    e.currentTarget.style.color = "#990000";
-                }
-            }}
-            onMouseLeave={(e) => {
-                if (!active) {
-                    e.currentTarget.style.borderColor = "#ddd";
-                    e.currentTarget.style.color = "#555";
-                }
+                borderColor: !active && isHovered ? "#990000" : active ? "#990000" : "#ddd",
             }}
         >
             {children}
         </button>
+    );
+}
+
+function TableRow({ request, index, onOpenModal }) {
+    const [isHovered, setIsHovered] = useState(false);
+
+    return (
+        <tr
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            style={{
+                ...styles.tableRow,
+                backgroundColor: isHovered ? "#f0f0f0" : index % 2 === 0 ? "#fafafa" : "white",
+            }}
+        >
+            <td style={styles.tableCell}>{request.id}</td>
+            <td style={styles.tableCell}>{request.student}</td>
+            <td style={styles.tableCell}>{request.type}</td>
+            <td style={styles.tableCell}>{request.date}</td>
+            <td style={styles.tableCell}>
+                <StatusBadge status={request.status} />
+            </td>
+            <td style={styles.tableCell}>
+                <button
+                    onClick={() => onOpenModal(request)}
+                    style={styles.detailButton}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#770000")}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#990000")}
+                >
+                    Ver Detalle
+                </button>
+            </td>
+        </tr>
     );
 }
 
@@ -329,13 +360,9 @@ function StatusBadge({ status }) {
     return (
         <span
             style={{
+                ...styles.statusBadge,
                 backgroundColor: style.bg,
                 color: style.text,
-                padding: "6px 16px",
-                borderRadius: "20px",
-                fontSize: "0.85rem",
-                fontWeight: "600",
-                display: "inline-block",
             }}
         >
             {status}
@@ -345,34 +372,10 @@ function StatusBadge({ status }) {
 
 function RequestModal({ request, onClose, onStatusChange }) {
     return (
-        <div
-            style={{
-                position: "fixed",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: "rgba(0,0,0,0.5)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                zIndex: 1000,
-            }}
-            onClick={onClose}
-        >
-            <div
-                style={{
-                    backgroundColor: "white",
-                    borderRadius: "16px",
-                    padding: "35px",
-                    maxWidth: "500px",
-                    width: "90%",
-                    boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
-                }}
-                onClick={(e) => e.stopPropagation()}
-            >
-                <h2 style={{ color: "#990000", marginBottom: "20px" }}>Detalle de Solicitud</h2>
-                <div style={{ marginBottom: "20px" }}>
+        <div style={styles.modalOverlay} onClick={onClose}>
+            <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                <h2 style={styles.modalTitle}>Detalle de Solicitud</h2>
+                <div style={styles.modalBody}>
                     <InfoRow label="ID:" value={request.id} />
                     <InfoRow label="Estudiante:" value={request.student} />
                     <InfoRow label="Tipo:" value={request.type} />
@@ -381,37 +384,27 @@ function RequestModal({ request, onClose, onStatusChange }) {
                 </div>
 
                 {request.status === "Pendiente" && (
-                    <div style={{ display: "flex", gap: "10px", marginTop: "25px" }}>
+                    <div style={styles.modalActions}>
                         <button
                             onClick={() => onStatusChange(request.id, "Aprobada")}
-                            style={actionButtonStyle("#28a745")}
+                            style={{ ...styles.actionButton, backgroundColor: "#28a745" }}
+                            onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.9")}
+                            onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
                         >
                             ✓ Aprobar
                         </button>
                         <button
                             onClick={() => onStatusChange(request.id, "Rechazada")}
-                            style={actionButtonStyle("#dc3545")}
+                            style={{ ...styles.actionButton, backgroundColor: "#dc3545" }}
+                            onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.9")}
+                            onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
                         >
                             ✗ Rechazar
                         </button>
                     </div>
                 )}
 
-                <button
-                    onClick={onClose}
-                    style={{
-                        marginTop: "15px",
-                        width: "100%",
-                        padding: "12px",
-                        backgroundColor: "#6c757d",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "8px",
-                        cursor: "pointer",
-                        fontSize: "0.95rem",
-                        fontWeight: "500",
-                    }}
-                >
+                <button onClick={onClose} style={styles.closeButton}>
                     Cerrar
                 </button>
             </div>
@@ -421,35 +414,390 @@ function RequestModal({ request, onClose, onStatusChange }) {
 
 function InfoRow({ label, value }) {
     return (
-        <div style={{ display: "flex", marginBottom: "12px", alignItems: "center" }}>
-            <strong style={{ minWidth: "120px", color: "#555" }}>{label}</strong>
-            <span style={{ color: "#333" }}>{value}</span>
+        <div style={styles.infoRow}>
+            <strong style={styles.infoLabel}>{label}</strong>
+            <span style={styles.infoValue}>{value}</span>
         </div>
     );
 }
 
-const headerStyle = {
-    padding: "16px",
-    textAlign: "left",
-    fontWeight: "600",
-    fontSize: "0.9rem",
+const styles = {
+    container: {
+        minHeight: "100vh",
+        backgroundColor: "#f8f9fa",
+        display: "flex",
+    },
+    leftPanel: {
+        width: "260px",
+        backgroundColor: "#8B0000",
+        padding: "30px 20px",
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column",
+        gap: "20px",
+        color: "#fff",
+        position: "sticky",
+        top: 0,
+        height: "100vh",
+    },
+    logoSection: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        marginBottom: "10px",
+    },
+    logoBox: {
+        border: "2px solid #fff",
+        padding: "15px 10px",
+        borderRadius: "4px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "2px",
+        marginBottom: "8px",
+        width: "100%",
+    },
+    logoText: {
+        fontSize: "11px",
+        fontWeight: "700",
+        color: "#fff",
+        letterSpacing: "0.5px",
+        textAlign: "center",
+    },
+    logoSubtext: {
+        fontSize: "9px",
+        fontWeight: "600",
+        color: "#fff",
+        letterSpacing: "0.3px",
+        marginTop: "4px",
+        textAlign: "center",
+    },
+    universityLabel: {
+        fontSize: "10px",
+        fontWeight: "600",
+        color: "#fff",
+        letterSpacing: "1px",
+        textAlign: "center",
+    },
+    profileSection: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+    },
+    avatar: {
+        width: "80px",
+        height: "80px",
+        borderRadius: "50%",
+        marginBottom: "12px",
+        border: "3px solid #fff",
+        backgroundColor: "#fff",
+    },
+    userName: {
+        fontSize: "16px",
+        fontWeight: "600",
+        color: "#fff",
+        marginBottom: "4px",
+        textAlign: "center",
+        lineHeight: "1.3",
+    },
+    userRole: {
+        fontSize: "13px",
+        color: "#ffcccc",
+        textAlign: "center",
+        lineHeight: "1.3",
+    },
+    divider: {
+        height: "1px",
+        backgroundColor: "rgba(255,255,255,0.3)",
+        margin: "5px 0",
+    },
+    navSection: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "5px",
+    },
+    navItem: {
+        display: "flex",
+        alignItems: "center",
+        gap: "12px",
+        padding: "12px 15px",
+        borderRadius: "8px",
+        transition: "all 0.2s",
+    },
+    navText: {
+        fontSize: "14px",
+        color: "#fff",
+        fontWeight: "500",
+    },
+    notificationsSection: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+    },
+    notificationsHeader: {
+        display: "flex",
+        alignItems: "center",
+        gap: "8px",
+        marginBottom: "4px",
+    },
+    notificationsTitle: {
+        fontSize: "14px",
+        fontWeight: "600",
+        color: "#fff",
+    },
+    notificationsList: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "8px",
+    },
+    notificationItem: {
+        padding: "10px 12px",
+        backgroundColor: "rgba(255,255,255,0.15)",
+        borderRadius: "8px",
+        borderLeft: "3px solid #fff",
+    },
+    notificationText: {
+        fontSize: "12px",
+        color: "#fff",
+        lineHeight: "1.4",
+    },
+    contentWrapper: {
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+    },
+    header: {
+        backgroundColor: "#fff",
+        borderBottom: "1px solid #e5e5e5",
+        padding: "12px 24px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        boxShadow: "0 2px 4px rgba(0,0,0,0.04)",
+    },
+    headerLeft: {
+        display: "flex",
+        alignItems: "center",
+        gap: "16px",
+    },
+    backButton: {
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+        padding: "8px",
+        color: "#990000",
+        borderRadius: "6px",
+        transition: "background-color 0.2s",
+    },
+    headerTitle: {
+        fontSize: "16px",
+        fontWeight: "500",
+        color: "#333",
+    },
+    headerRight: {
+        display: "flex",
+        gap: "8px",
+    },
+    iconButton: {
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+        padding: "8px",
+        borderRadius: "6px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#990000",
+        transition: "background-color 0.2s",
+    },
+    main: {
+        flex: 1,
+        padding: "40px 50px",
+        overflowY: "auto",
+    },
+    alertBox: {
+        backgroundColor: "#fff3cd",
+        color: "#856404",
+        padding: "15px 25px",
+        borderRadius: "12px",
+        marginBottom: "30px",
+        fontWeight: "500",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+        display: "flex",
+        alignItems: "center",
+        gap: "10px",
+    },
+    titleSection: {
+        marginBottom: "30px",
+    },
+    pageTitle: {
+        color: "#990000",
+        marginBottom: "8px",
+        fontSize: "1.8rem",
+        display: "flex",
+        alignItems: "center",
+        fontWeight: "600",
+    },
+    pageSubtitle: {
+        color: "#666",
+        fontSize: "0.95rem",
+        lineHeight: "1.5",
+    },
+    statsGrid: {
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+        gap: "20px",
+        marginBottom: "30px",
+    },
+    statCard: {
+        padding: "20px 25px",
+        borderRadius: "14px",
+        boxShadow: "0 3px 8px rgba(0,0,0,0.06)",
+        transition: "transform 0.2s",
+    },
+    statTitle: {
+        color: "#555",
+        fontSize: "0.9rem",
+        marginBottom: "8px",
+        fontWeight: "600",
+    },
+    statValue: {
+        fontSize: "2rem",
+        fontWeight: "700",
+        color: "#333",
+        margin: 0,
+    },
+    filtersContainer: {
+        marginBottom: "25px",
+        display: "flex",
+        gap: "10px",
+        flexWrap: "wrap",
+    },
+    filterButton: {
+        padding: "10px 20px",
+        borderRadius: "8px",
+        cursor: "pointer",
+        fontSize: "0.9rem",
+        transition: "all 0.2s",
+    },
+    tableContainer: {
+        backgroundColor: "white",
+        borderRadius: "16px",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+        overflow: "hidden",
+    },
+    table: {
+        width: "100%",
+        borderCollapse: "collapse",
+    },
+    tableHeader: {
+        backgroundColor: "#990000",
+        color: "white",
+    },
+    headerCell: {
+        padding: "16px",
+        textAlign: "left",
+        fontWeight: "600",
+        fontSize: "0.9rem",
+    },
+    tableRow: {
+        transition: "background-color 0.2s",
+    },
+    tableCell: {
+        padding: "16px",
+        fontSize: "0.9rem",
+        color: "#333",
+    },
+    detailButton: {
+        backgroundColor: "#990000",
+        color: "white",
+        border: "none",
+        padding: "8px 20px",
+        borderRadius: "8px",
+        cursor: "pointer",
+        fontSize: "0.85rem",
+        fontWeight: "500",
+        transition: "background-color 0.2s",
+    },
+    statusBadge: {
+        padding: "6px 16px",
+        borderRadius: "20px",
+        fontSize: "0.85rem",
+        fontWeight: "600",
+        display: "inline-block",
+    },
+    modalOverlay: {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0,0,0,0.5)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1000,
+    },
+    modalContent: {
+        backgroundColor: "white",
+        borderRadius: "16px",
+        padding: "35px",
+        maxWidth: "500px",
+        width: "90%",
+        boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
+    },
+    modalTitle: {
+        color: "#990000",
+        marginBottom: "20px",
+        fontSize: "1.5rem",
+        fontWeight: "600",
+    },
+    modalBody: {
+        marginBottom: "20px",
+    },
+    infoRow: {
+        display: "flex",
+        marginBottom: "12px",
+        alignItems: "center",
+    },
+    infoLabel: {
+        minWidth: "120px",
+        color: "#555",
+        fontSize: "0.95rem",
+    },
+    infoValue: {
+        color: "#333",
+        fontSize: "0.95rem",
+    },
+    modalActions: {
+        display: "flex",
+        gap: "10px",
+        marginTop: "25px",
+    },
+    actionButton: {
+        flex: 1,
+        padding: "12px",
+        color: "white",
+        border: "none",
+        borderRadius: "8px",
+        cursor: "pointer",
+        fontSize: "0.95rem",
+        fontWeight: "600",
+        transition: "opacity 0.2s",
+    },
+    closeButton: {
+        marginTop: "15px",
+        width: "100%",
+        padding: "12px",
+        backgroundColor: "#6c757d",
+        color: "white",
+        border: "none",
+        borderRadius: "8px",
+        cursor: "pointer",
+        fontSize: "0.95rem",
+        fontWeight: "500",
+    },
 };
-
-const cellStyle = {
-    padding: "16px",
-    fontSize: "0.9rem",
-    color: "#333",
-};
-
-const actionButtonStyle = (color) => ({
-    flex: 1,
-    padding: "12px",
-    backgroundColor: color,
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-    fontSize: "0.95rem",
-    fontWeight: "600",
-    transition: "opacity 0.2s",
-});

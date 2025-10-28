@@ -1,13 +1,15 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import Sidebar from "../Student/Sidebar";
+import React, { useState } from "react";
+import { Home, User, Bell, ChevronLeft, FileText, Users, BarChart3, Settings } from "lucide-react";
 
+export default function ImprovedDeanDashboard({ user, onNavigate, onLogout }) {
+    const [notifications] = useState([
+        { id: 1, text: "Nueva solicitud aprobada", read: false },
+        { id: 2, text: "Recordatorio: entregar proyecto final", read: false },
+        { id: 3, text: "Cambio de horario de Matemáticas", read: true }
+    ]);
 
-export default function DeanDashboard({ dean, onNavigate, onLogout }) {
-    const navigate = useNavigate();
-
-    const mockDean = dean || {
-            name: "Dr. Carlos Rodríguez",
+    const mockDean = {
+        name: "Dr. Carlos Rodríguez",
         role: "Coordinador Académico",
         career: "Ingeniería de Sistemas",
         image: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
@@ -18,217 +20,354 @@ export default function DeanDashboard({ dean, onNavigate, onLogout }) {
         avgTime: 2.5,
     };
 
-    const handleCardClick = (title) => {
-        switch (title) {
-            case "🗂️ Gestión de Solicitudes":
-                navigate("/dean/requests");
-                break;
-            case "👥 Información Estudiantes":
-                navigate("/dean/students"); // ✅ Ya funcional
-                break;
-            case "📊 Gestión de Grupos":
-                navigate("/dean/groups");
-                break;
-            case "⚙️ Configuración":
-                navigate("/dean/configuration");
-                break;
-            default:
-                break;
+    const handleCardClick = (module) => {
+        if (onNavigate) {
+            onNavigate(module);
         }
     };
 
     return (
         <div style={styles.container}>
-            {/* Sidebar lateral */}
-            <Sidebar user={mockDean} onNavigate={onNavigate} onLogout={onLogout} />
-
-            {/* Contenido principal */}
-            <main style={styles.main}>
-                {/* Alerta superior */}
-                <div style={styles.alertBox}>
-                    ⚠️ <strong>¡Atención!</strong> Tienes {mockDean.alerts} solicitudes que vencen en menos de 24 horas.
+            {/* Left Panel - Panel del Decano */}
+            <aside style={styles.leftPanel}>
+                <div style={styles.logoSection}>
+                    <div style={styles.logoBox}>
+                        <span style={styles.logoText}>ESCUELA</span>
+                        <span style={styles.logoText}>COLOMBIANA</span>
+                        <span style={styles.logoText}>DE INGENIERÍA</span>
+                        <span style={styles.logoSubtext}>JULIO GARAVITO</span>
+                    </div>
+                    <div style={styles.universityLabel}>UNIVERSIDAD</div>
                 </div>
 
-                {/* Tarjetas pequeñas */}
-                <section style={styles.tinyCardsSection}>
-                    <TinyDashboardCard title="Solicitudes Pendientes" value={mockDean.pendingRequests} color="#ffe0e0" />
-                    <TinyDashboardCard title="Solicitudes Hoy" value={mockDean.requestsToday} color="#d8fdd8" />
-                    <TinyDashboardCard title="Grupos en Alerta" value={mockDean.groupsInAlert} color="#fff7cc" />
-                    <TinyDashboardCard title="Tiempo Promedio" value={`${mockDean.avgTime} días`} color="#e5dcff" />
-                </section>
+                <div style={styles.profileSection}>
+                    <img
+                        src={mockDean.image}
+                        alt="Avatar"
+                        style={styles.avatar}
+                    />
+                    <h3 style={styles.userName}>{mockDean.name}</h3>
+                    <p style={styles.userRole}>{mockDean.career}</p>
+                </div>
 
-                {/* Tarjetas grandes con navegación */}
-                <section style={styles.bigCardsSection}>
-                    <BigDashboardCard
-                        title="🗂️ Gestión de Solicitudes"
-                        description="Revisa, aprueba o rechaza las solicitudes académicas pendientes."
-                        color="#fff0f0"
-                        onClick={() => handleCardClick("🗂️ Gestión de Solicitudes")}
-                    />
-                    <BigDashboardCard
-                        title="👥 Información Estudiantes"
-                        description="Consulta los datos y progreso de los estudiantes."
-                        color="#f7f7ff"
-                        onClick={() => handleCardClick("👥 Información Estudiantes")}
-                    />
-                    <BigDashboardCard
-                        title="📊 Gestión de Grupos"
-                        description="Administra los grupos académicos y monitorea su estado."
-                        color="#fdf4e3"
-                        onClick={() => handleCardClick("📊 Gestión de Grupos")}
-                    />
-                    <BigDashboardCard
-                        title="⚙️ Configuración"
-                        description="Ajustes generales del sistema académico."
-                        color="#fdfbe8"
-                        onClick={() => handleCardClick("⚙️ Configuración")}
-                    />
-                </section>
-            </main>
+                <div style={styles.divider}></div>
 
-            {/* Panel lateral derecho */}
-            <aside style={styles.rightPanel}>
-                <img
-                    src={mockDean.image}
-                    alt="Dean Avatar"
-                    style={styles.deanAvatar}
-                />
-                <h3 style={styles.deanName}>{mockDean.name}</h3>
-                <p style={styles.deanRole}>{mockDean.role}</p>
-                <p style={styles.deanCareer}>{mockDean.career}</p>
+                <div style={styles.notificationsSection}>
+                    <div style={styles.notificationsHeader}>
+                        <Bell size={16} color="#fff" />
+                        <span style={styles.notificationsTitle}>Notificaciones</span>
+                    </div>
+                    <div style={styles.notificationsList}>
+                        {notifications.map((notif) => (
+                            <div key={notif.id} style={styles.notificationItem}>
+                                <span style={styles.notificationText}>{notif.text}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </aside>
+
+            {/* Main Content Wrapper */}
+            <div style={styles.contentWrapper}>
+                {/* Header */}
+                <header style={styles.header}>
+                    <div style={styles.headerLeft}>
+                        <button style={styles.backButton}>
+                            <ChevronLeft size={20} />
+                        </button>
+                        <span style={styles.headerTitle}>Julio Garavito · SIRHA</span>
+                    </div>
+                    <div style={styles.headerRight}>
+                        <button style={styles.iconButton}>
+                            <FileText size={20} />
+                        </button>
+                        <button style={styles.iconButton}>
+                            <Bell size={20} />
+                        </button>
+                        <button style={styles.iconButton}>
+                            <User size={20} />
+                        </button>
+                        <button style={styles.iconButton}>
+                            <Home size={20} />
+                        </button>
+                    </div>
+                </header>
+
+                {/* Main Content */}
+                <main style={styles.main}>
+                    {/* Tarjetas principales grandes - Estilo SIRHA */}
+                    <section style={styles.bigCardsGrid}>
+                        <BigCard
+                            icon={<FileText size={48} />}
+                            title="Gestión de Solicitudes"
+                            description="Revisa, aprueba o rechaza las solicitudes académicas pendientes."
+                            onClick={() => handleCardClick("gestionar-solicitudes")}
+                        />
+                        <BigCard
+                            icon={<Users size={48} />}
+                            title="Información Estudiantes"
+                            description="Consulta los datos y progreso de los estudiantes."
+                            onClick={() => handleCardClick("informacion-estudiantes")}
+                        />
+                        <BigCard
+                            icon={<BarChart3 size={48} />}
+                            title="Gestión de Grupos"
+                            description="Administra los grupos académicos y monitorea su estado."
+                            onClick={() => handleCardClick("monitor-grupos")}
+                        />
+                        <BigCard
+                            icon={<Settings size={48} />}
+                            title="Configuración"
+                            description="Ajustes generales del sistema académico."
+                            onClick={() => handleCardClick("configuracion")}
+                        />
+                    </section>
+                </main>
+            </div>
         </div>
     );
 }
 
-/* === Estilos centralizados === */
-const styles = {
-    container: {
-        display: "flex",
-        minHeight: "100vh",
-        backgroundColor: "#fffafc",
-        overflow: "hidden",
-    },
-    main: {
-        flex: 1,
-        padding: "40px 60px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-    },
-    alertBox: {
-        backgroundColor: "#fff3cd",
-        color: "#856404",
-        padding: "15px 25px",
-        borderRadius: "12px",
-        marginBottom: "25px",
-        fontWeight: "500",
-        boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
-        width: "100%",
-        maxWidth: "1100px",
-        textAlign: "center",
-    },
-    tinyCardsSection: {
-        display: "flex",
-        justifyContent: "center",
-        gap: "20px",
-        flexWrap: "wrap",
-        marginBottom: "40px",
-        width: "100%",
-        maxWidth: "1100px",
-    },
-    bigCardsSection: {
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-        gap: "25px",
-        width: "100%",
-        maxWidth: "1100px",
-    },
-    rightPanel: {
-        width: "280px",
-        backgroundColor: "#fff",
-        borderLeft: "1px solid #eee",
-        padding: "40px 25px",
-        boxShadow: "-2px 0 8px rgba(0,0,0,0.05)",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
-        position: "sticky",
-        top: "0",
-    },
-    deanAvatar: {
-        width: "110px",
-        height: "110px",
-        borderRadius: "50%",
-        marginBottom: "15px",
-        border: "3px solid #990000",
-    },
-    deanName: {
-        marginBottom: "5px",
-        color: "#990000",
-        textAlign: "center",
-    },
-    deanRole: {
-        color: "#555",
-        marginBottom: "5px",
-        textAlign: "center",
-    },
-    deanCareer: {
-        color: "#777",
-        fontSize: "0.9rem",
-        textAlign: "center",
-    },
-};
+/* Tarjeta grande principal - Estilo SIRHA */
+function BigCard({ icon, title, description, onClick }) {
+    const [isHovered, setIsHovered] = useState(false);
 
-/* === Tarjetas pequeñas === */
-function TinyDashboardCard({ title, value, color }) {
-    return (
-        <div
-            style={{
-                backgroundColor: color,
-                padding: "15px 20px",
-                borderRadius: "14px",
-                textAlign: "center",
-                boxShadow: "0 3px 6px rgba(0,0,0,0.05)",
-                minWidth: "220px",
-                flex: "1",
-                transition: "transform 0.2s ease",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-3px)")}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
-        >
-            <h4 style={{ color: "#333", fontSize: "1rem", marginBottom: "6px", fontWeight: "600" }}>{title}</h4>
-            <p style={{ fontSize: "1.6rem", fontWeight: "700", color: "#000" }}>{value}</p>
-        </div>
-    );
-}
-
-/* === Tarjetas grandes === */
-function BigDashboardCard({ title, description, color, onClick }) {
     return (
         <div
             onClick={onClick}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
             style={{
-                backgroundColor: color,
-                borderRadius: "18px",
-                padding: "30px 25px",
-                boxShadow: "0 4px 8px rgba(0,0,0,0.05)",
-                transition: "transform 0.2s, box-shadow 0.2s",
-                cursor: "pointer",
-            }}
-            onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "scale(1.03)";
-                e.currentTarget.style.boxShadow = "0 6px 12px rgba(0,0,0,0.1)";
-            }}
-            onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "scale(1)";
-                e.currentTarget.style.boxShadow = "0 4px 8px rgba(0,0,0,0.05)";
+                ...styles.bigCard,
+                transform: isHovered ? "translateY(-5px)" : "translateY(0)",
+                boxShadow: isHovered
+                    ? "0 10px 25px rgba(0,0,0,0.15)"
+                    : "0 3px 10px rgba(0,0,0,0.08)",
             }}
         >
-            <h3 style={{ color: "#990000", marginBottom: "10px" }}>{title}</h3>
-            <p style={{ color: "#555", lineHeight: "1.5" }}>{description}</p>
+            <div style={styles.cardIconWrapper}>{icon}</div>
+            <h3 style={styles.cardTitle}>{title}</h3>
+            <p style={styles.cardDescription}>{description}</p>
         </div>
     );
 }
+
+/* Styles */
+const styles = {
+    container: {
+        minHeight: "100vh",
+        backgroundColor: "#f8f9fa",
+        display: "flex",
+    },
+    leftPanel: {
+        width: "260px",
+        backgroundColor: "#8B0000",
+        padding: "30px 20px",
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column",
+        gap: "25px",
+        color: "#fff",
+    },
+    logoSection: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        marginBottom: "10px",
+    },
+    logoBox: {
+        border: "2px solid #fff",
+        padding: "15px 10px",
+        borderRadius: "4px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "2px",
+        marginBottom: "8px",
+        width: "100%",
+    },
+    logoText: {
+        fontSize: "11px",
+        fontWeight: "700",
+        color: "#fff",
+        letterSpacing: "0.5px",
+        textAlign: "center",
+    },
+    logoSubtext: {
+        fontSize: "9px",
+        fontWeight: "600",
+        color: "#fff",
+        letterSpacing: "0.3px",
+        marginTop: "4px",
+        textAlign: "center",
+    },
+    universityLabel: {
+        fontSize: "10px",
+        fontWeight: "600",
+        color: "#fff",
+        letterSpacing: "1px",
+        textAlign: "center",
+    },
+    profileSection: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+    },
+    avatar: {
+        width: "80px",
+        height: "80px",
+        borderRadius: "50%",
+        marginBottom: "12px",
+        border: "3px solid #fff",
+        backgroundColor: "#fff",
+    },
+    userName: {
+        fontSize: "16px",
+        fontWeight: "600",
+        color: "#fff",
+        marginBottom: "4px",
+        textAlign: "center",
+        lineHeight: "1.3",
+    },
+    userRole: {
+        fontSize: "13px",
+        color: "#ffcccc",
+        textAlign: "center",
+        lineHeight: "1.3",
+    },
+    divider: {
+        height: "1px",
+        backgroundColor: "rgba(255,255,255,0.3)",
+        margin: "5px 0",
+    },
+    notificationsSection: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+    },
+    notificationsHeader: {
+        display: "flex",
+        alignItems: "center",
+        gap: "8px",
+        marginBottom: "4px",
+    },
+    notificationsTitle: {
+        fontSize: "14px",
+        fontWeight: "600",
+        color: "#fff",
+    },
+    notificationsList: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "8px",
+    },
+    notificationItem: {
+        padding: "10px 12px",
+        backgroundColor: "rgba(255,255,255,0.15)",
+        borderRadius: "8px",
+        borderLeft: "3px solid #fff",
+    },
+    notificationText: {
+        fontSize: "12px",
+        color: "#fff",
+        lineHeight: "1.4",
+    },
+    contentWrapper: {
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+    },
+    header: {
+        backgroundColor: "#fff",
+        borderBottom: "1px solid #e5e5e5",
+        padding: "12px 24px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        boxShadow: "0 2px 4px rgba(0,0,0,0.04)",
+    },
+    headerLeft: {
+        display: "flex",
+        alignItems: "center",
+        gap: "16px",
+    },
+    backButton: {
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+        padding: "8px",
+        color: "#990000",
+        borderRadius: "6px",
+        transition: "background-color 0.2s",
+    },
+    headerTitle: {
+        fontSize: "16px",
+        fontWeight: "500",
+        color: "#333",
+    },
+    headerRight: {
+        display: "flex",
+        gap: "8px",
+    },
+    iconButton: {
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+        padding: "8px",
+        borderRadius: "6px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#990000",
+        transition: "background-color 0.2s",
+    },
+    main: {
+        flex: 1,
+        padding: "50px 40px",
+        overflowY: "auto",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "flex-start",
+    },
+    bigCardsGrid: {
+        display: "grid",
+        gridTemplateColumns: "repeat(2, 1fr)",
+        gap: "30px",
+        maxWidth: "1000px",
+        width: "100%",
+    },
+    bigCard: {
+        backgroundColor: "#fff",
+        borderRadius: "16px",
+        padding: "40px 30px",
+        cursor: "pointer",
+        transition: "all 0.3s ease",
+        border: "1px solid #e8e8e8",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        textAlign: "center",
+        minHeight: "240px",
+        justifyContent: "center",
+    },
+    cardIconWrapper: {
+        color: "#990000",
+        marginBottom: "20px",
+    },
+    cardTitle: {
+        fontSize: "20px",
+        fontWeight: "600",
+        color: "#1a1a1a",
+        marginBottom: "12px",
+        lineHeight: "1.3",
+    },
+    cardDescription: {
+        fontSize: "14px",
+        color: "#666",
+        lineHeight: "1.6",
+        maxWidth: "280px",
+    },
+};
